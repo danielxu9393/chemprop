@@ -86,7 +86,7 @@ Args
  'reaction_mode': 'reac_diff',
  'reaction_solvent': False,
  'resume_experiment': False,
- 'save_dir': 'delaney_checkpoints_quantile',
+ 'save_dir': 'delaney_checkpoints_quantile09',
  'save_preds': False,
  'save_smiles_splits': False,
  'seed': 0,
@@ -169,103 +169,103 @@ Loss = 2.0134e-01, PNorm = 34.2572, GNorm = 0.6486, lr_0 = 7.6024e-04
 Validation rmse = 2.910798
 Epoch 5
 Loss = 1.1356e-01, PNorm = 34.2837, GNorm = 0.3498, lr_0 = 7.2629e-04
-Validation rmse = 1.888463
+Validation rmse = 1.888464
 Epoch 6
 Loss = 8.5169e-02, PNorm = 34.3094, GNorm = 0.8781, lr_0 = 6.9069e-04
 Loss = 8.8759e-02, PNorm = 34.3293, GNorm = 0.1814, lr_0 = 6.5985e-04
-Validation rmse = 1.717550
+Validation rmse = 1.717551
 Epoch 7
 Loss = 8.9949e-02, PNorm = 34.3538, GNorm = 0.7385, lr_0 = 6.2751e-04
 Loss = 8.3398e-02, PNorm = 34.3746, GNorm = 0.5072, lr_0 = 5.9948e-04
-Validation rmse = 1.459540
+Validation rmse = 1.459546
 Epoch 8
-Loss = 7.4577e-02, PNorm = 34.3925, GNorm = 0.5982, lr_0 = 5.7010e-04
-Loss = 7.7523e-02, PNorm = 34.4119, GNorm = 0.2615, lr_0 = 5.4464e-04
-Validation rmse = 1.836239
+Loss = 7.4576e-02, PNorm = 34.3925, GNorm = 0.5982, lr_0 = 5.7010e-04
+Loss = 7.7528e-02, PNorm = 34.4120, GNorm = 0.2614, lr_0 = 5.4464e-04
+Validation rmse = 1.834374
 Epoch 9
-Loss = 7.8260e-02, PNorm = 34.4313, GNorm = 0.2598, lr_0 = 5.1795e-04
-Loss = 6.3936e-02, PNorm = 34.4515, GNorm = 0.2585, lr_0 = 4.9482e-04
-Loss = 1.1021e-01, PNorm = 34.4536, GNorm = 0.8231, lr_0 = 4.9256e-04
-Validation rmse = 1.379728
+Loss = 7.8293e-02, PNorm = 34.4314, GNorm = 0.2604, lr_0 = 5.1795e-04
+Loss = 6.3948e-02, PNorm = 34.4514, GNorm = 0.2591, lr_0 = 4.9482e-04
+Loss = 1.0991e-01, PNorm = 34.4535, GNorm = 0.8265, lr_0 = 4.9256e-04
+Validation rmse = 1.374092
 Epoch 10
-Loss = 6.4685e-02, PNorm = 34.4756, GNorm = 0.3508, lr_0 = 4.7056e-04
-Validation rmse = 1.799017
+Loss = 6.4749e-02, PNorm = 34.4753, GNorm = 0.5207, lr_0 = 4.7056e-04
+Validation rmse = 1.806997
 Epoch 11
-Loss = 7.5782e-02, PNorm = 34.4950, GNorm = 0.7853, lr_0 = 4.4750e-04
-Loss = 7.4298e-02, PNorm = 34.5087, GNorm = 0.5465, lr_0 = 4.2752e-04
-Validation rmse = 1.703996
+Loss = 7.6784e-02, PNorm = 34.4954, GNorm = 0.7881, lr_0 = 4.4750e-04
+Loss = 7.5674e-02, PNorm = 34.5095, GNorm = 0.5518, lr_0 = 4.2752e-04
+Validation rmse = 1.599648
 Epoch 12
-Loss = 6.8230e-02, PNorm = 34.5208, GNorm = 0.6542, lr_0 = 4.0656e-04
-Loss = 6.5004e-02, PNorm = 34.5371, GNorm = 0.6416, lr_0 = 3.8841e-04
-Validation rmse = 1.574774
+Loss = 6.5596e-02, PNorm = 34.5201, GNorm = 0.6506, lr_0 = 4.0656e-04
+Loss = 6.5308e-02, PNorm = 34.5344, GNorm = 0.3954, lr_0 = 3.8841e-04
+Validation rmse = 1.233950
 Epoch 13
-Loss = 8.0869e-02, PNorm = 34.5459, GNorm = 0.5603, lr_0 = 3.6937e-04
-Loss = 8.1999e-02, PNorm = 34.5600, GNorm = 0.5891, lr_0 = 3.5287e-04
-Validation rmse = 1.805826
+Loss = 6.2931e-02, PNorm = 34.5442, GNorm = 0.4819, lr_0 = 3.6937e-04
+Loss = 6.3949e-02, PNorm = 34.5559, GNorm = 0.2933, lr_0 = 3.5287e-04
+Validation rmse = 1.120865
 Epoch 14
-Loss = 7.0634e-02, PNorm = 34.5763, GNorm = 0.2875, lr_0 = 3.3558e-04
-Loss = 6.2944e-02, PNorm = 34.5859, GNorm = 0.2806, lr_0 = 3.2059e-04
-Loss = 5.9772e-02, PNorm = 34.5868, GNorm = 4.8031, lr_0 = 3.1913e-04
-Validation rmse = 1.698540
+Loss = 6.6585e-02, PNorm = 34.5682, GNorm = 0.6182, lr_0 = 3.3558e-04
+Loss = 5.7933e-02, PNorm = 34.5789, GNorm = 0.4459, lr_0 = 3.2059e-04
+Loss = 4.9325e-02, PNorm = 34.5797, GNorm = 1.1540, lr_0 = 3.1913e-04
+Validation rmse = 1.440638
 Epoch 15
-Loss = 7.9475e-02, PNorm = 34.5942, GNorm = 0.3847, lr_0 = 3.0488e-04
-Validation rmse = 1.529656
+Loss = 6.7051e-02, PNorm = 34.5892, GNorm = 0.9131, lr_0 = 3.0488e-04
+Validation rmse = 1.292460
 Epoch 16
-Loss = 6.2554e-02, PNorm = 34.6094, GNorm = 0.3853, lr_0 = 2.8994e-04
-Loss = 6.8303e-02, PNorm = 34.6208, GNorm = 0.4009, lr_0 = 2.7699e-04
-Validation rmse = 1.109707
+Loss = 4.8119e-02, PNorm = 34.5965, GNorm = 0.2091, lr_0 = 2.8994e-04
+Loss = 5.7494e-02, PNorm = 34.6064, GNorm = 0.3849, lr_0 = 2.7699e-04
+Validation rmse = 1.512992
 Epoch 17
-Loss = 6.1024e-02, PNorm = 34.6311, GNorm = 0.2362, lr_0 = 2.6341e-04
-Loss = 6.1807e-02, PNorm = 34.6358, GNorm = 0.9150, lr_0 = 2.5165e-04
-Validation rmse = 1.605037
+Loss = 7.4517e-02, PNorm = 34.6136, GNorm = 0.8089, lr_0 = 2.6341e-04
+Loss = 7.6060e-02, PNorm = 34.6214, GNorm = 0.4210, lr_0 = 2.5165e-04
+Validation rmse = 1.550326
 Epoch 18
-Loss = 6.2989e-02, PNorm = 34.6431, GNorm = 0.9911, lr_0 = 2.3931e-04
-Loss = 5.9806e-02, PNorm = 34.6496, GNorm = 0.4156, lr_0 = 2.2863e-04
-Validation rmse = 1.279055
+Loss = 6.1782e-02, PNorm = 34.6322, GNorm = 1.0015, lr_0 = 2.3931e-04
+Loss = 6.4312e-02, PNorm = 34.6365, GNorm = 0.4057, lr_0 = 2.2863e-04
+Validation rmse = 1.248944
 Epoch 19
-Loss = 6.1909e-02, PNorm = 34.6531, GNorm = 0.7043, lr_0 = 2.1742e-04
-Loss = 5.9843e-02, PNorm = 34.6583, GNorm = 0.6312, lr_0 = 2.0771e-04
-Loss = 8.9835e-03, PNorm = 34.6586, GNorm = 0.8984, lr_0 = 2.0676e-04
-Validation rmse = 0.962723
+Loss = 6.9759e-02, PNorm = 34.6516, GNorm = 0.4596, lr_0 = 2.1742e-04
+Loss = 6.5861e-02, PNorm = 34.6603, GNorm = 0.7631, lr_0 = 2.0771e-04
+Loss = 2.2579e-02, PNorm = 34.6610, GNorm = 0.9238, lr_0 = 2.0676e-04
+Validation rmse = 1.135283
 Epoch 20
-Loss = 6.7610e-02, PNorm = 34.6644, GNorm = 0.6991, lr_0 = 1.9753e-04
-Validation rmse = 1.150457
+Loss = 6.4935e-02, PNorm = 34.6654, GNorm = 0.5202, lr_0 = 1.9753e-04
+Validation rmse = 1.068693
 Epoch 21
-Loss = 5.0629e-02, PNorm = 34.6691, GNorm = 0.2779, lr_0 = 1.8785e-04
-Loss = 5.8604e-02, PNorm = 34.6735, GNorm = 0.4293, lr_0 = 1.7946e-04
-Validation rmse = 1.258893
+Loss = 5.1309e-02, PNorm = 34.6692, GNorm = 0.7017, lr_0 = 1.8785e-04
+Loss = 5.5508e-02, PNorm = 34.6736, GNorm = 0.7361, lr_0 = 1.7946e-04
+Validation rmse = 1.170194
 Epoch 22
-Loss = 5.7909e-02, PNorm = 34.6776, GNorm = 0.1857, lr_0 = 1.7066e-04
-Loss = 5.6246e-02, PNorm = 34.6822, GNorm = 0.7748, lr_0 = 1.6304e-04
-Validation rmse = 1.130176
+Loss = 5.3866e-02, PNorm = 34.6779, GNorm = 0.2719, lr_0 = 1.7066e-04
+Loss = 5.3586e-02, PNorm = 34.6811, GNorm = 0.8510, lr_0 = 1.6304e-04
+Validation rmse = 1.067810
 Epoch 23
-Loss = 5.5503e-02, PNorm = 34.6872, GNorm = 0.2302, lr_0 = 1.5505e-04
-Loss = 5.3930e-02, PNorm = 34.6925, GNorm = 0.5221, lr_0 = 1.4813e-04
-Validation rmse = 1.157430
+Loss = 5.2227e-02, PNorm = 34.6853, GNorm = 0.3658, lr_0 = 1.5505e-04
+Loss = 5.3601e-02, PNorm = 34.6889, GNorm = 0.3696, lr_0 = 1.4813e-04
+Validation rmse = 1.178973
 Epoch 24
-Loss = 5.4262e-02, PNorm = 34.6965, GNorm = 0.2182, lr_0 = 1.4087e-04
-Loss = 5.5861e-02, PNorm = 34.6989, GNorm = 0.4434, lr_0 = 1.3458e-04
-Validation rmse = 1.200891
+Loss = 5.0696e-02, PNorm = 34.6923, GNorm = 0.2146, lr_0 = 1.4087e-04
+Loss = 5.2380e-02, PNorm = 34.6960, GNorm = 0.3637, lr_0 = 1.3458e-04
+Validation rmse = 1.267896
 Epoch 25
-Loss = 5.4644e-02, PNorm = 34.7028, GNorm = 0.6536, lr_0 = 1.2857e-04
-Validation rmse = 1.093410
+Loss = 5.3420e-02, PNorm = 34.6991, GNorm = 0.7027, lr_0 = 1.2857e-04
+Validation rmse = 1.046800
 Epoch 26
-Loss = 5.8810e-02, PNorm = 34.7071, GNorm = 1.0252, lr_0 = 1.2226e-04
-Loss = 5.1978e-02, PNorm = 34.7126, GNorm = 0.9179, lr_0 = 1.1680e-04
-Validation rmse = 1.107275
+Loss = 5.4400e-02, PNorm = 34.7033, GNorm = 1.1253, lr_0 = 1.2226e-04
+Loss = 5.0582e-02, PNorm = 34.7078, GNorm = 0.3927, lr_0 = 1.1680e-04
+Validation rmse = 1.131153
 Epoch 27
-Loss = 4.9190e-02, PNorm = 34.7154, GNorm = 1.0791, lr_0 = 1.1108e-04
-Loss = 5.4352e-02, PNorm = 34.7182, GNorm = 0.8066, lr_0 = 1.0612e-04
-Validation rmse = 1.202903
+Loss = 4.8306e-02, PNorm = 34.7118, GNorm = 0.7859, lr_0 = 1.1108e-04
+Loss = 5.3969e-02, PNorm = 34.7150, GNorm = 0.2516, lr_0 = 1.0612e-04
+Validation rmse = 1.309898
 Epoch 28
-Loss = 5.5618e-02, PNorm = 34.7194, GNorm = 0.6428, lr_0 = 1.0092e-04
-Loss = 4.9601e-02, PNorm = 34.7212, GNorm = 0.3083, lr_0 = 1.0000e-04
-Validation rmse = 1.142404
+Loss = 6.0621e-02, PNorm = 34.7159, GNorm = 0.8069, lr_0 = 1.0092e-04
+Loss = 5.4752e-02, PNorm = 34.7169, GNorm = 0.7233, lr_0 = 1.0000e-04
+Validation rmse = 1.283468
 Epoch 29
-Loss = 4.8905e-02, PNorm = 34.7241, GNorm = 0.8126, lr_0 = 1.0000e-04
-Loss = 5.1606e-02, PNorm = 34.7265, GNorm = 0.2167, lr_0 = 1.0000e-04
-Validation rmse = 1.045957
-Model 0 best validation rmse = 0.962723 on epoch 19
+Loss = 5.7131e-02, PNorm = 34.7191, GNorm = 0.5169, lr_0 = 1.0000e-04
+Loss = 5.6918e-02, PNorm = 34.7213, GNorm = 0.9456, lr_0 = 1.0000e-04
+Validation rmse = 1.028172
+Model 0 best validation rmse = 1.028172 on epoch 29
 Loading pretrained parameter "encoder.encoder.0.cached_zero_vector".
 Loading pretrained parameter "encoder.encoder.0.W_i.weight".
 Loading pretrained parameter "encoder.encoder.0.W_h.weight".
@@ -275,12 +275,12 @@ Loading pretrained parameter "ffn.1.weight".
 Loading pretrained parameter "ffn.1.bias".
 Loading pretrained parameter "ffn.4.weight".
 Loading pretrained parameter "ffn.4.bias".
-Model 0 test rmse = 1.145285
-Ensemble test rmse = 1.145285
+Model 0 test rmse = 1.133468
+Ensemble test rmse = 1.133468
 1-fold cross validation
-	Seed 0 ==> test rmse = 1.145285
-Overall test rmse = 1.145285 +/- 0.000000
-Elapsed time = 0:00:41
+	Seed 0 ==> test rmse = 1.133468
+Overall test rmse = 1.133468 +/- 0.000000
+Elapsed time = 0:00:30
 Command line
 python delaneyTrainQuantile.py
 Args
@@ -364,12 +364,13 @@ Args
  'overwrite_default_bond_features': False,
  'phase_features_path': None,
  'pytorch_seed': 0,
+ 'quantile': 0.9,
  'quiet': False,
  'reaction': False,
  'reaction_mode': 'reac_diff',
  'reaction_solvent': False,
  'resume_experiment': False,
- 'save_dir': 'delaney_checkpoints_quantile',
+ 'save_dir': 'delaney_checkpoints_quantile09',
  'save_preds': False,
  'save_smiles_splits': False,
  'seed': 0,
@@ -431,124 +432,124 @@ MoleculeModel(
 )
 Number of parameters = 355,201
 Epoch 0
-Loss = 2.2296e-01, PNorm = 34.0168, GNorm = 0.7595, lr_0 = 3.7500e-04
-Validation rmse = 2.921956
+Loss = 2.7875e-01, PNorm = 34.0187, GNorm = 0.8269, lr_0 = 3.7500e-04
+Validation rmse = 2.640950
 Epoch 1
-Loss = 1.6274e-01, PNorm = 34.0301, GNorm = 0.6083, lr_0 = 6.5000e-04
-Loss = 1.4507e-01, PNorm = 34.0584, GNorm = 0.1908, lr_0 = 9.0000e-04
-Validation rmse = 2.461938
+Loss = 1.3282e-01, PNorm = 34.0310, GNorm = 0.5853, lr_0 = 6.5000e-04
+Loss = 1.5703e-01, PNorm = 34.0595, GNorm = 0.2599, lr_0 = 9.0000e-04
+Validation rmse = 2.289636
 Epoch 2
-Loss = 1.3049e-01, PNorm = 34.1127, GNorm = 1.5093, lr_0 = 9.6853e-04
-Loss = 1.4058e-01, PNorm = 34.1624, GNorm = 0.6709, lr_0 = 9.2527e-04
-Validation rmse = 1.881515
+Loss = 1.1582e-01, PNorm = 34.1116, GNorm = 0.3431, lr_0 = 9.6853e-04
+Loss = 1.1888e-01, PNorm = 34.1496, GNorm = 0.8085, lr_0 = 9.2527e-04
+Validation rmse = 2.099386
 Epoch 3
-Loss = 1.2824e-01, PNorm = 34.2108, GNorm = 0.7914, lr_0 = 8.7992e-04
-Loss = 1.1977e-01, PNorm = 34.2476, GNorm = 0.2306, lr_0 = 8.4063e-04
-Validation rmse = 1.647164
+Loss = 9.2539e-02, PNorm = 34.1792, GNorm = 0.5122, lr_0 = 8.7992e-04
+Loss = 9.4453e-02, PNorm = 34.2076, GNorm = 0.8134, lr_0 = 8.4063e-04
+Validation rmse = 2.792865
 Epoch 4
-Loss = 1.1349e-01, PNorm = 34.2823, GNorm = 0.8281, lr_0 = 7.9943e-04
-Loss = 1.3562e-01, PNorm = 34.3009, GNorm = 0.8072, lr_0 = 7.6372e-04
-Loss = 7.0375e-02, PNorm = 34.3030, GNorm = 0.7185, lr_0 = 7.6024e-04
-Validation rmse = 2.399568
+Loss = 1.4889e-01, PNorm = 34.2222, GNorm = 0.2543, lr_0 = 7.9943e-04
+Loss = 1.3509e-01, PNorm = 34.2539, GNorm = 0.4610, lr_0 = 7.6372e-04
+Loss = 2.0134e-01, PNorm = 34.2572, GNorm = 0.6487, lr_0 = 7.6024e-04
+Validation rmse = 2.910827
 Epoch 5
-Loss = 1.2985e-01, PNorm = 34.3375, GNorm = 0.5720, lr_0 = 7.2629e-04
-Validation rmse = 1.512035
+Loss = 1.1356e-01, PNorm = 34.2837, GNorm = 0.3491, lr_0 = 7.2629e-04
+Validation rmse = 1.887988
 Epoch 6
-Loss = 1.2136e-01, PNorm = 34.3660, GNorm = 1.5508, lr_0 = 6.9069e-04
-Loss = 1.1869e-01, PNorm = 34.3885, GNorm = 0.1850, lr_0 = 6.5985e-04
-Validation rmse = 1.788690
+Loss = 8.5174e-02, PNorm = 34.3094, GNorm = 0.8800, lr_0 = 6.9069e-04
+Loss = 8.8787e-02, PNorm = 34.3292, GNorm = 0.1770, lr_0 = 6.5985e-04
+Validation rmse = 1.770613
 Epoch 7
-Loss = 9.8140e-02, PNorm = 34.4214, GNorm = 0.7078, lr_0 = 6.2751e-04
-Loss = 1.0007e-01, PNorm = 34.4466, GNorm = 0.6199, lr_0 = 5.9948e-04
-Validation rmse = 1.558827
+Loss = 9.0989e-02, PNorm = 34.3540, GNorm = 0.9054, lr_0 = 6.2751e-04
+Loss = 8.1092e-02, PNorm = 34.3753, GNorm = 0.5934, lr_0 = 5.9948e-04
+Validation rmse = 1.513069
 Epoch 8
-Loss = 8.8033e-02, PNorm = 34.4694, GNorm = 0.5925, lr_0 = 5.7010e-04
-Loss = 8.5979e-02, PNorm = 34.4950, GNorm = 0.3535, lr_0 = 5.4464e-04
-Validation rmse = 1.320300
+Loss = 7.1485e-02, PNorm = 34.3958, GNorm = 0.4147, lr_0 = 5.7010e-04
+Loss = 7.6982e-02, PNorm = 34.4171, GNorm = 0.3911, lr_0 = 5.4464e-04
+Validation rmse = 1.855201
 Epoch 9
-Loss = 8.0476e-02, PNorm = 34.5105, GNorm = 0.6416, lr_0 = 5.1795e-04
-Loss = 8.1283e-02, PNorm = 34.5358, GNorm = 0.4224, lr_0 = 4.9482e-04
-Loss = 6.1760e-02, PNorm = 34.5373, GNorm = 1.2206, lr_0 = 4.9256e-04
-Validation rmse = 1.693569
+Loss = 8.0128e-02, PNorm = 34.4366, GNorm = 0.4297, lr_0 = 5.1795e-04
+Loss = 6.8675e-02, PNorm = 34.4554, GNorm = 0.7006, lr_0 = 4.9482e-04
+Loss = 1.2398e-01, PNorm = 34.4573, GNorm = 0.8505, lr_0 = 4.9256e-04
+Validation rmse = 1.576602
 Epoch 10
-Loss = 7.5264e-02, PNorm = 34.5579, GNorm = 0.2434, lr_0 = 4.7056e-04
-Validation rmse = 1.362477
+Loss = 6.4975e-02, PNorm = 34.4765, GNorm = 0.5840, lr_0 = 4.7056e-04
+Validation rmse = 1.537107
 Epoch 11
-Loss = 7.7192e-02, PNorm = 34.5809, GNorm = 1.5247, lr_0 = 4.4750e-04
-Loss = 6.9446e-02, PNorm = 34.6026, GNorm = 0.4515, lr_0 = 4.2752e-04
-Validation rmse = 1.016968
+Loss = 6.0546e-02, PNorm = 34.4973, GNorm = 0.4836, lr_0 = 4.4750e-04
+Loss = 6.8317e-02, PNorm = 34.5122, GNorm = 0.3927, lr_0 = 4.2752e-04
+Validation rmse = 1.377460
 Epoch 12
-Loss = 6.7311e-02, PNorm = 34.6210, GNorm = 0.4936, lr_0 = 4.0656e-04
-Loss = 6.7868e-02, PNorm = 34.6377, GNorm = 0.5505, lr_0 = 3.8841e-04
-Validation rmse = 1.243843
+Loss = 6.2606e-02, PNorm = 34.5235, GNorm = 0.4919, lr_0 = 4.0656e-04
+Loss = 6.1402e-02, PNorm = 34.5345, GNorm = 0.7314, lr_0 = 3.8841e-04
+Validation rmse = 1.241688
 Epoch 13
-Loss = 6.9053e-02, PNorm = 34.6599, GNorm = 1.5231, lr_0 = 3.6937e-04
-Loss = 7.1508e-02, PNorm = 34.6780, GNorm = 0.3632, lr_0 = 3.5287e-04
-Validation rmse = 1.477817
+Loss = 6.1594e-02, PNorm = 34.5469, GNorm = 0.6743, lr_0 = 3.6937e-04
+Loss = 6.3502e-02, PNorm = 34.5586, GNorm = 0.3075, lr_0 = 3.5287e-04
+Validation rmse = 1.226676
 Epoch 14
-Loss = 6.9563e-02, PNorm = 34.6941, GNorm = 1.0071, lr_0 = 3.3558e-04
-Loss = 6.2487e-02, PNorm = 34.7074, GNorm = 0.9257, lr_0 = 3.2059e-04
-Loss = 1.4828e-01, PNorm = 34.7076, GNorm = 3.8429, lr_0 = 3.1913e-04
-Validation rmse = 1.726331
+Loss = 6.2645e-02, PNorm = 34.5796, GNorm = 0.7647, lr_0 = 3.3558e-04
+Loss = 5.9827e-02, PNorm = 34.5910, GNorm = 0.6341, lr_0 = 3.2059e-04
+Loss = 5.8883e-02, PNorm = 34.5914, GNorm = 5.4264, lr_0 = 3.1913e-04
+Validation rmse = 1.992181
 Epoch 15
-Loss = 7.9848e-02, PNorm = 34.7189, GNorm = 2.8051, lr_0 = 3.0488e-04
-Validation rmse = 1.375451
+Loss = 9.5131e-02, PNorm = 34.5963, GNorm = 0.4662, lr_0 = 3.0488e-04
+Validation rmse = 1.556544
 Epoch 16
-Loss = 6.3429e-02, PNorm = 34.7352, GNorm = 0.4963, lr_0 = 2.8994e-04
-Loss = 6.6015e-02, PNorm = 34.7391, GNorm = 0.3246, lr_0 = 2.7699e-04
-Validation rmse = 1.149167
+Loss = 6.4102e-02, PNorm = 34.6094, GNorm = 0.4176, lr_0 = 2.8994e-04
+Loss = 6.5074e-02, PNorm = 34.6211, GNorm = 0.4119, lr_0 = 2.7699e-04
+Validation rmse = 1.180811
 Epoch 17
-Loss = 6.0657e-02, PNorm = 34.7478, GNorm = 1.0932, lr_0 = 2.6341e-04
-Loss = 5.8495e-02, PNorm = 34.7554, GNorm = 0.8404, lr_0 = 2.5165e-04
-Validation rmse = 1.558823
+Loss = 5.7198e-02, PNorm = 34.6297, GNorm = 0.2565, lr_0 = 2.6341e-04
+Loss = 5.5391e-02, PNorm = 34.6328, GNorm = 0.6747, lr_0 = 2.5165e-04
+Validation rmse = 1.375099
 Epoch 18
-Loss = 9.7783e-02, PNorm = 34.7635, GNorm = 1.0470, lr_0 = 2.3931e-04
-Loss = 7.8285e-02, PNorm = 34.7734, GNorm = 1.7065, lr_0 = 2.2863e-04
-Validation rmse = 1.620074
+Loss = 5.6480e-02, PNorm = 34.6406, GNorm = 0.9003, lr_0 = 2.3931e-04
+Loss = 5.6518e-02, PNorm = 34.6465, GNorm = 0.3652, lr_0 = 2.2863e-04
+Validation rmse = 1.294283
 Epoch 19
-Loss = 6.9921e-02, PNorm = 34.7816, GNorm = 0.7649, lr_0 = 2.1742e-04
-Loss = 5.4511e-02, PNorm = 34.7855, GNorm = 0.7123, lr_0 = 2.0771e-04
-Loss = 9.1448e-02, PNorm = 34.7863, GNorm = 0.8306, lr_0 = 2.0676e-04
-Validation rmse = 1.098150
+Loss = 6.3215e-02, PNorm = 34.6550, GNorm = 1.3425, lr_0 = 2.1742e-04
+Loss = 5.2399e-02, PNorm = 34.6605, GNorm = 0.4604, lr_0 = 2.0771e-04
+Loss = 8.6705e-03, PNorm = 34.6609, GNorm = 0.9490, lr_0 = 2.0676e-04
+Validation rmse = 1.060737
 Epoch 20
-Loss = 6.0333e-02, PNorm = 34.7953, GNorm = 0.8515, lr_0 = 1.9753e-04
-Validation rmse = 0.849749
+Loss = 5.5250e-02, PNorm = 34.6663, GNorm = 0.2545, lr_0 = 1.9753e-04
+Validation rmse = 1.247786
 Epoch 21
-Loss = 6.4368e-02, PNorm = 34.7969, GNorm = 1.7599, lr_0 = 1.8785e-04
-Loss = 6.2995e-02, PNorm = 34.7997, GNorm = 0.5468, lr_0 = 1.7946e-04
-Validation rmse = 0.858667
+Loss = 4.9464e-02, PNorm = 34.6699, GNorm = 0.7482, lr_0 = 1.8785e-04
+Loss = 5.5903e-02, PNorm = 34.6731, GNorm = 0.7590, lr_0 = 1.7946e-04
+Validation rmse = 1.090024
 Epoch 22
-Loss = 6.8415e-02, PNorm = 34.8072, GNorm = 0.4406, lr_0 = 1.7066e-04
-Loss = 5.1645e-02, PNorm = 34.8131, GNorm = 0.5008, lr_0 = 1.6304e-04
-Validation rmse = 1.012538
+Loss = 5.3389e-02, PNorm = 34.6783, GNorm = 0.5159, lr_0 = 1.7066e-04
+Loss = 5.2198e-02, PNorm = 34.6830, GNorm = 0.3161, lr_0 = 1.6304e-04
+Validation rmse = 1.172234
 Epoch 23
-Loss = 4.9846e-02, PNorm = 34.8169, GNorm = 0.4664, lr_0 = 1.5505e-04
-Loss = 5.1314e-02, PNorm = 34.8211, GNorm = 1.4263, lr_0 = 1.4813e-04
-Validation rmse = 1.254569
+Loss = 5.0012e-02, PNorm = 34.6868, GNorm = 0.3138, lr_0 = 1.5505e-04
+Loss = 5.1739e-02, PNorm = 34.6910, GNorm = 0.4838, lr_0 = 1.4813e-04
+Validation rmse = 1.138285
 Epoch 24
-Loss = 5.7430e-02, PNorm = 34.8205, GNorm = 0.5793, lr_0 = 1.4087e-04
-Loss = 5.1819e-02, PNorm = 34.8241, GNorm = 0.3589, lr_0 = 1.3458e-04
-Validation rmse = 1.158138
+Loss = 5.0941e-02, PNorm = 34.6952, GNorm = 0.4033, lr_0 = 1.4087e-04
+Loss = 5.3560e-02, PNorm = 34.6985, GNorm = 0.3527, lr_0 = 1.3458e-04
+Validation rmse = 1.295085
 Epoch 25
-Loss = 5.4507e-02, PNorm = 34.8289, GNorm = 0.8781, lr_0 = 1.2857e-04
-Validation rmse = 1.133400
+Loss = 5.3388e-02, PNorm = 34.7020, GNorm = 0.4770, lr_0 = 1.2857e-04
+Validation rmse = 0.941862
 Epoch 26
-Loss = 5.7310e-02, PNorm = 34.8328, GNorm = 0.4060, lr_0 = 1.2226e-04
-Loss = 4.7611e-02, PNorm = 34.8367, GNorm = 0.3578, lr_0 = 1.1680e-04
-Validation rmse = 1.143308
+Loss = 6.8441e-02, PNorm = 34.7053, GNorm = 2.5301, lr_0 = 1.2226e-04
+Loss = 5.0393e-02, PNorm = 34.7086, GNorm = 0.3985, lr_0 = 1.1680e-04
+Validation rmse = 1.128787
 Epoch 27
-Loss = 4.2774e-02, PNorm = 34.8398, GNorm = 0.3919, lr_0 = 1.1108e-04
-Loss = 4.9583e-02, PNorm = 34.8424, GNorm = 0.2630, lr_0 = 1.0612e-04
-Validation rmse = 1.019217
+Loss = 4.9214e-02, PNorm = 34.7144, GNorm = 0.7914, lr_0 = 1.1108e-04
+Loss = 5.5451e-02, PNorm = 34.7186, GNorm = 0.7104, lr_0 = 1.0612e-04
+Validation rmse = 1.351109
 Epoch 28
-Loss = 4.2133e-02, PNorm = 34.8455, GNorm = 0.5576, lr_0 = 1.0092e-04
-Loss = 4.8603e-02, PNorm = 34.8494, GNorm = 0.4641, lr_0 = 1.0000e-04
-Validation rmse = 1.001342
+Loss = 6.3901e-02, PNorm = 34.7203, GNorm = 0.6844, lr_0 = 1.0092e-04
+Loss = 5.9767e-02, PNorm = 34.7221, GNorm = 0.6218, lr_0 = 1.0000e-04
+Validation rmse = 1.091136
 Epoch 29
-Loss = 3.9319e-02, PNorm = 34.8514, GNorm = 0.3331, lr_0 = 1.0000e-04
-Loss = 5.1898e-02, PNorm = 34.8536, GNorm = 0.3988, lr_0 = 1.0000e-04
-Validation rmse = 1.085308
-Model 0 best validation rmse = 0.849749 on epoch 20
+Loss = 5.1052e-02, PNorm = 34.7254, GNorm = 1.9155, lr_0 = 1.0000e-04
+Loss = 5.9162e-02, PNorm = 34.7272, GNorm = 0.8071, lr_0 = 1.0000e-04
+Validation rmse = 1.133776
+Model 0 best validation rmse = 0.941862 on epoch 25
 Loading pretrained parameter "encoder.encoder.0.cached_zero_vector".
 Loading pretrained parameter "encoder.encoder.0.W_i.weight".
 Loading pretrained parameter "encoder.encoder.0.W_h.weight".
@@ -558,9 +559,9 @@ Loading pretrained parameter "ffn.1.weight".
 Loading pretrained parameter "ffn.1.bias".
 Loading pretrained parameter "ffn.4.weight".
 Loading pretrained parameter "ffn.4.bias".
-Model 0 test rmse = 0.980762
-Ensemble test rmse = 0.980762
+Model 0 test rmse = 1.085380
+Ensemble test rmse = 1.085380
 1-fold cross validation
-	Seed 0 ==> test rmse = 0.980762
-Overall test rmse = 0.980762 +/- 0.000000
-Elapsed time = 0:00:26
+	Seed 0 ==> test rmse = 1.085380
+Overall test rmse = 1.085380 +/- 0.000000
+Elapsed time = 0:00:28

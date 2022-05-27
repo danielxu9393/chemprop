@@ -174,6 +174,7 @@ class NoUncertaintyPredictor(UncertaintyPredictor):
     def get_uncal_output(self):
         return self.uncal_vars
 
+
 class ConformalPredictor(UncertaintyPredictor):
     """
     Class that is used for predictions when no uncertainty method is selected.
