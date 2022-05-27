@@ -417,6 +417,8 @@ class TrainArgs(CommonArgs):
     """Values in targets for dataset type spectra are replaced with this value, intended to be a small positive number used to enforce positive values."""
     evidential_regularization: float = 0
     """Value used in regularization for evidential loss function. Value used in literature was 1."""
+    quantile: float = 0.5
+    """Quantile for quantile loss"""
     overwrite_default_atom_features: bool = False
     """
     Overwrites the default atom descriptors with the new ones instead of concatenating them.

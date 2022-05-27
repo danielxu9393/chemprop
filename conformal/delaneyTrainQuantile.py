@@ -2,7 +2,8 @@ arguments = [
     '--data_path', 'data/delaney.csv',
     '--dataset_type', 'regression',
     '--save_dir', 'delaney_checkpoints_quantile09',
-    '--loss_function', 'quantile'
+    '--loss_function', 'quantile',
+    '--quantile', '0.9'
 ]
 if __name__ ==  '__main__':
     import sys

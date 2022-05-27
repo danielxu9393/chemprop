@@ -241,7 +241,7 @@ def normal_mve(pred_values, targets):
         2 * pred_var
     )
 
-def quantile_loss(pred_values, targets, quantile=0.9):
+def quantile_loss(pred_values, targets, quantile=0.5):
     """
     Use the negative log likelihood function of a normal distribution as a loss function used for making
     simultaneous predictions of the mean and error distribution variance simultaneously.

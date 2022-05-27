@@ -106,6 +106,8 @@ def train(model: MoleculeModel,
             loss = loss_func(preds, targets, args.evidential_regularization) * target_weights * data_weights * mask
         elif args.loss_function == 'dirichlet': # classification
             loss = loss_func(preds, targets, args.evidential_regularization) * target_weights * data_weights * mask
+        elif args.loss_function == 'quantile':
+            loss = loss_func(preds, targets, args.quantile) * target_weights * data_weights * mask
         else:
             loss = loss_func(preds, targets) * target_weights * data_weights * mask
         loss = loss.sum() / mask.sum()
