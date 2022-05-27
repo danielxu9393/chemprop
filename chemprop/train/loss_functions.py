@@ -22,6 +22,7 @@ def get_loss_func(args: TrainArgs) -> Callable:
             "bounded_mse": bounded_mse_loss,
             "mve": normal_mve,
             "evidential": evidential_loss,
+            "quantile": quantile_loss,
         },
         "classification": {
             "binary_cross_entropy": nn.BCEWithLogitsLoss(reduction="none"),
@@ -239,6 +240,18 @@ def normal_mve(pred_values, targets):
     return torch.log(2 * np.pi * pred_var) / 2 + (pred_means - targets) ** 2 / (
         2 * pred_var
     )
+
+def quantile_loss(pred_values, targets, quantile=0.9):
+    """
+    Use the negative log likelihood function of a normal distribution as a loss function used for making
+    simultaneous predictions of the mean and error distribution variance simultaneously.
+
+    :param quantile: Desired quantile for model prediction
+    :return: A tensor loss value.
+    """
+    error = targets - pred_values
+
+    return torch.max((quantile - 1) * error, quantile * error)
 
 
 # evidential classification
