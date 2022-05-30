@@ -23,6 +23,7 @@ def get_loss_func(args: TrainArgs) -> Callable:
             "mve": normal_mve,
             "evidential": evidential_loss,
             "quantile": quantile_loss,
+            "quantile_interval": quantile_loss,
         },
         "classification": {
             "binary_cross_entropy": nn.BCEWithLogitsLoss(reduction="none"),
@@ -252,6 +253,7 @@ def quantile_loss(pred_values, targets, quantile=0.5):
     error = targets - pred_values
 
     return torch.max((quantile - 1) * error, quantile * error)
+
 
 
 # evidential classification

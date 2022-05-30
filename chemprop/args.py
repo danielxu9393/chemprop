@@ -231,7 +231,7 @@ class TrainArgs(CommonArgs):
     """Name of the columns to ignore when :code:`target_columns` is not provided."""
     dataset_type: Literal['regression', 'classification', 'multiclass', 'spectra']
     """Type of dataset. This determines the default loss function used during training."""
-    loss_function: Literal['mse', 'bounded_mse', 'binary_cross_entropy', 'cross_entropy', 'mcc', 'sid', 'wasserstein', 'mve', 'evidential', 'dirichlet', 'quantile'] = None
+    loss_function: Literal['mse', 'bounded_mse', 'binary_cross_entropy', 'cross_entropy', 'mcc', 'sid', 'wasserstein', 'mve', 'evidential', 'dirichlet', 'quantile', 'quantile_interval'] = None
     """Choice of loss function. Loss functions are limited to compatible dataset types."""
     multiclass_num_classes: int = 3
     """Number of classes when running multiclass classification."""
@@ -419,6 +419,8 @@ class TrainArgs(CommonArgs):
     """Value used in regularization for evidential loss function. Value used in literature was 1."""
     quantile: float = 0.5
     """Quantile for quantile loss"""
+    alpha: float = 0.1
+    """Target error bounds for quantile interval loss"""
     overwrite_default_atom_features: bool = False
     """
     Overwrites the default atom descriptors with the new ones instead of concatenating them.
