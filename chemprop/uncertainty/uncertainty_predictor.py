@@ -174,15 +174,13 @@ class NoUncertaintyPredictor(UncertaintyPredictor):
     def get_uncal_output(self):
         return self.uncal_vars
 
-
-class ConformalPredictor(UncertaintyPredictor):
+class ConformalQuantilePredictor(UncertaintyPredictor):
     """
-    Class that is used for predictions when no uncertainty method is selected.
-    Model value predictions are made as normal but uncertainty output only returns "nan".
+    Predictor modified for use with conformal quantile regression calibrator. Output predictions modified.
     """
     @property
     def label(self):
-        return "conformal_prediction"
+        return "no_uncertainty_method"
 
     def calculate_predictions(self):
         for i, (model, scaler_list) in enumerate(
@@ -211,13 +209,13 @@ class ConformalPredictor(UncertaintyPredictor):
                         bond_feature_scaler, scale_bond_features=True
                     )
 
-            preds = predict( #Use the pytorch model to predict!!! What is type of preds?
+            preds = predict(
                 model=model,
                 data_loader=self.test_data_loader,
                 scaler=scaler,
                 return_unc_parameters=False,
             )
-            if self.dataset_type == "spectra":
+            if self.dataset_type == "spectra":#spectra maybe not compatible with conformal quantile regression
                 preds = normalize_spectra(
                     spectra=preds,
                     phase_features=self.test_data.phase_features(),
@@ -225,123 +223,33 @@ class ConformalPredictor(UncertaintyPredictor):
                     excluded_sub_value=float("nan"),
                 )
             if i == 0:
-                sum_preds = np.array(preds)#first runthrough we initialize sum_preds
+                sum_preds = dict()
+                sum_preds['lower_quantile'] = np.array(preds['lower_quantile'])
+                sum_preds['upper_quantile'] = np.array(preds['upper_quantile'])
                 if self.individual_ensemble_predictions:
-                    individual_preds = np.expand_dims(np.array(preds), axis=-1)#If want individual preds, we make a 2D array with each of the things in a diff column
+                    individual_preds = dict()
+                    individual_preds['lower_quantile'] = np.expand_dims(np.array(preds['lower_quantile']), axis=-1)
+                    individual_preds['upper_quantile'] = np.expand_dims(np.array(preds['upper_quantile']), axis=-1)
             else:
-                sum_preds += np.array(preds)#sum_preds sums preds over entire ensemble of models
+                sum_preds['lower_quantile'] += np.array(preds['lower_quantile'])
+                sum_preds['upper_quantile'] += np.array(preds['upper_quantile'])
                 if self.individual_ensemble_predictions:
-                    individual_preds = np.append(individual_preds, np.expand_dims(preds, axis=-1), axis=-1)
+                    individual_preds['lower_quantile'] = np.append(individual_preds['lower_quantile'], np.expand_dims(preds['lower_quantile'], axis=-1), axis=-1)
+                    individual_preds['upper_quantile'] = np.append(individual_preds['upper_quantile'], np.expand_dims(preds['upper_quantile'], axis=-1), axis=-1)
 
-        qhat=0.6#Random hardcoded qhat
-
-        self.uncal_preds = (sum_preds / self.num_models)#Divide by number of models to get average of preds.
-        self.uncal_vars=(self.uncal_preds>qhat).astype(int)
-
-        self.uncal_preds=self.uncal_preds.tolist()#Convert from np array back to list???
-        #uncal_vars = np.zeros_like(sum_preds)
-        #uncal_vars[:] = np.nan
-        #self.uncal_vars = uncal_vars
+        self.uncal_preds = dict()
+        self.uncal_preds['upper_quantile'] = (sum_preds['upper_quantile'] / self.num_models).tolist()
+        self.uncal_preds['lower_quantile'] = (sum_preds['lower_quantile'] / self.num_models).tolist()
+        
+        uncal_vars = np.zeros_like(sum_preds['lower_quantile'])
+        uncal_vars[:] = np.nan
+        self.uncal_vars = uncal_vars
         if self.individual_ensemble_predictions:
-            self.individual_preds = individual_preds.tolist()
+            self.individual_preds['upper_quantile'] = individual_preds['upper_quantile'].tolist()
+            self.individual_preds['lower_quantile'] = individual_preds['lower_quantile'].tolist()
         
     def get_uncal_output(self):
         return self.uncal_vars
-
-class ConformalAdaptivePredictor(UncertaintyPredictor):
-    """
-    Class that is used for predictions when no uncertainty method is selected.
-    Model value predictions are made as normal but uncertainty output only returns "nan".
-    """
-    @property
-    def label(self):
-        return "conformal_prediction"
-
-    def calculate_predictions(self):
-        for i, (model, scaler_list) in enumerate(
-            tqdm(zip(self.models, self.scalers), total=self.num_models)
-        ):#iterates through all models!
-            (
-                scaler,
-                features_scaler,
-                atom_descriptor_scaler,
-                bond_feature_scaler,
-            ) = scaler_list
-            if (
-                features_scaler is not None
-                or atom_descriptor_scaler is not None
-                or bond_feature_scaler is not None
-            ):
-                self.test_data.reset_features_and_targets()
-                if features_scaler is not None:
-                    self.test_data.normalize_features(features_scaler)
-                if atom_descriptor_scaler is not None:
-                    self.test_data.normalize_features(
-                        atom_descriptor_scaler, scale_atom_descriptors=True
-                    )
-                if bond_feature_scaler is not None:
-                    self.test_data.normalize_features(
-                        bond_feature_scaler, scale_bond_features=True
-                    )
-
-            preds = predict( #Use the pytorch model to predict!!! What is type of preds?
-                model=model,
-                data_loader=self.test_data_loader,
-                scaler=scaler,
-                return_unc_parameters=False,
-            )
-            if self.dataset_type == "spectra":
-                preds = normalize_spectra(
-                    spectra=preds,
-                    phase_features=self.test_data.phase_features(),
-                    phase_mask=self.spectra_phase_mask,
-                    excluded_sub_value=float("nan"),
-                )
-            if i == 0:
-                sum_preds = np.array(preds)#first runthrough we initialize sum_preds
-                #print(np.array(preds))
-                #print(np.array(preds).shape)
-                if self.individual_ensemble_predictions:
-                    individual_preds = np.expand_dims(np.array(preds), axis=-1)#If want individual preds, we make a 2D array with each of the things in a diff column
-            else:
-                sum_preds += np.array(preds)#sum_preds sums preds over entire ensemble of models
-                #print(np.array(preds))
-                #print(np.array(preds).shape)
-                if self.individual_ensemble_predictions:
-                    individual_preds = np.append(individual_preds, np.expand_dims(preds, axis=-1), axis=-1)
-
-        qhat=1#Random hardcoded qhat
-
-        uncal_preds = (sum_preds / self.num_models)#Divide by number of models to get average of preds.
-        #self.uncal_vars=(self.uncal_preds>qhat).astype(int)
-        uncal_vars = np.zeros_like(sum_preds)
-
-        def s_adaptive(x,y,uncal_preds):#x,y are the indices
-            result = 0
-            for Y in range(uncal_preds.shape[1]):
-                if uncal_preds[x][Y] >= uncal_preds[x][y]:
-                    result += uncal_preds[x][Y]
-            return result
-
-        for x in range(uncal_preds.shape[0]):
-            for y in range(uncal_preds.shape[1]):
-                if s_adaptive(x,y,uncal_preds)<=qhat:#smaller score here means x,y more likely.
-                    uncal_vars[x][y]=1
-                else:
-                    uncal_vars[x][y]=0
-
-        self.uncal_preds=uncal_preds.tolist()#Convert from np array back to list???
-        self.uncal_vars=uncal_vars.tolist()
-        #uncal_vars = np.zeros_like(sum_preds)
-        #uncal_vars[:] = np.nan
-        #self.uncal_vars = uncal_vars
-        if self.individual_ensemble_predictions:
-            self.individual_preds = individual_preds.tolist()
-        
-    def get_uncal_output(self):
-        return self.uncal_vars
-
-
 
 class RoundRobinSpectraPredictor(UncertaintyPredictor):
     """
@@ -988,8 +896,7 @@ def build_uncertainty_predictor(
         "evidential_aleatoric": EvidentialAleatoricPredictor,
         "dropout": DropoutPredictor,
         "spectra_roundrobin": RoundRobinSpectraPredictor,
-        "conformal": ConformalPredictor,
-        "conformal_adaptive": ConformalAdaptivePredictor,
+        "conformal_quantile_regression": ConformalQuantilePredictor,
     }
 
     predictor_class = supported_predictors.get(uncertainty_method, None)

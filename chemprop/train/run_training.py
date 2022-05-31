@@ -311,6 +311,10 @@ def run_training(args: TrainArgs,
             data_loader=test_data_loader,
             scaler=scaler
         )
+
+        if model.loss_function == 'quantile_interval':
+            test_preds = test_preds['lower_quantile']
+
         test_scores = evaluate_predictions(
             preds=test_preds,
             targets=test_targets,

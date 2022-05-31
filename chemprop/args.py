@@ -759,8 +759,6 @@ class PredictArgs(CommonArgs):
         'classification',
         'dropout',
         'spectra_roundrobin',
-        'conformal',#added new possibility
-        'conformal_adaptive',
     ] = None
     """The method of calculating uncertainty."""
     calibration_method: Literal['zscaling', 'tscaling', 'zelikman_interval', 'mve_weighting', 'platt', 'isotonic', 'conformal', 'conformal_adaptive', 'conformal_regression', 'conformal_quantile_regression'] = None

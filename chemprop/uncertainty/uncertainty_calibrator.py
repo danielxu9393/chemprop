@@ -65,7 +65,7 @@ class UncertaintyCalibrator(ABC):
             uncertainty_dropout_p=uncertainty_dropout_p,
             alpha=alpha,
             dropout_sampling_size=dropout_sampling_size,
-            individual_ensemble_predictions=(self.calibration_method == 'conformal_quantile_regression'),
+            individual_ensemble_predictions=False,
             spectra_phase_mask=spectra_phase_mask,
         )
 
@@ -853,34 +853,49 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
             )
 
     def calibrate(self):
-        uncal_preds = np.array(
-            self.calibration_predictor.get_uncal_preds()
-        )  # shape(data, tasks, num_classes)
-        individual_preds = np.array(self.calibration_predictor.get_individual_preds())
+        uncal_preds = self.calibration_predictor.get_uncal_preds()
+        uncal_preds['lower_quantile'] = np.array(uncal_preds['lower_quantile'])
+        uncal_preds['upper_quantile'] = np.array(uncal_preds['upper_quantile'])
+
         targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
 
 
         N = targets.shape[0]
+        """
+        calibration_scores = np.zeros(N+1)
+        calibration_scores[:N]=np.maximum(uncal_preds['lower_quantile']-targets, targets-uncal_preds['upper_quantile'])
+        calibration_scores[N] = np.Inf
+        calibration_scores = np.sort(np.absolute(calibration_scores))
+        self.qhat = np.quantile(calibration_scores,1-self.alpha)
+        """
+
+        
         calibration_scores = np.zeros(N+1)
         for i in range(N):
-            calibration_scores[i] = max(individual_preds[i][0][0]-targets[i], targets[i]-individual_preds[i][0][1])
+            calibration_scores[i] = max(uncal_preds['lower_quantile'][i]-targets[i], targets[i]-uncal_preds['upper_quantile'][i])
         
         calibration_scores[N] = np.Inf
         calibration_scores = np.sort(np.absolute(calibration_scores))
         self.qhat = np.quantile(calibration_scores,1-self.alpha)
+        
 
 
 
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
-        uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
-        individual_preds = np.array(uncal_predictor.get_individual_preds())
+        uncal_preds = uncal_predictor.get_uncal_preds()  # shape(data, task)
+        uncal_preds['lower_quantile'] = np.array(uncal_preds['lower_quantile'])
+        uncal_preds['upper_quantile'] = np.array(uncal_preds['upper_quantile'])
+        uncal_preds=np.concatenate((uncal_preds['lower_quantile'], uncal_preds['upper_quantile']), axis=1)
+
+
         N = uncal_preds.shape[0]
         intervals = np.zeros((N,2), dtype=float)
         for i in range(N):
-            intervals[i][0] = individual_preds[i][0][0] - self.qhat
-            intervals[i][1] = individual_preds[i][0][1] + self.qhat
+            intervals[i][0] = uncal_preds[i][0] - self.qhat
+            intervals[i][1] = uncal_preds[i][1] + self.qhat
+
 
         return uncal_preds.tolist(), intervals.tolist()
 

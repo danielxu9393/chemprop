@@ -119,6 +119,8 @@ def evaluate(model: MoleculeModel,
         data_loader=data_loader,
         scaler=scaler
     )
+    if model.loss_function == 'quantile_interval':
+        preds = preds['lower_quantile']
 
     results = evaluate_predictions(
         preds=preds,

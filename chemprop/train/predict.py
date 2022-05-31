@@ -97,8 +97,8 @@ def predict(
         # Inverse scale if regression
         if scaler is not None:
             if model.loss_function == 'quantile_interval':
-                batch_preds_lower_quantile = scaler.inverse_transform(batch_preds_lower_quantile)
-                batch_preds_upper_quantile = scaler.inverse_transform(batch_preds_upper_quantile)
+                batch_preds['lower_quantile'] = scaler.inverse_transform(batch_preds['lower_quantile'])
+                batch_preds['upper_quantile'] = scaler.inverse_transform(batch_preds['upper_quantile'])
             else:## Don't know what this is for
                 batch_preds = scaler.inverse_transform(batch_preds)
 
@@ -109,11 +109,11 @@ def predict(
 
         # Collect vectors
         
-        elif model.loss_function == 'quantile_interval':
-            batch_preds_lower_quantile = batch_preds_lower_quantile.tolist()
-            batch_preds_upper_quantile = batch_preds_upper_quantile.tolist()
-            preds['lower_quantile'].extend(batch_preds_lower_quantile)
-            preds['upper_quantile'].extend(batch_preds_upper_quantile)
+        if model.loss_function == 'quantile_interval':
+            batch_preds['lower_quantile'] = batch_preds['lower_quantile'].tolist()
+            batch_preds['upper_quantile'] = batch_preds['upper_quantile'].tolist()
+            preds['lower_quantile'].extend(batch_preds['lower_quantile'])
+            preds['upper_quantile'].extend(batch_preds['upper_quantile'])
         else:
             batch_preds = batch_preds.tolist()
             preds.extend(batch_preds)
@@ -134,12 +134,8 @@ def predict(
             return preds, alphas
         elif model.loss_function == "evidential":
             return preds, lambdas, alphas, betas
-        elif model.loss_function == 'quantile_interval':
-            return preds['lower_quantile'], preds['upper_quantile']
 
-    elif model.loss_function == 'quantile_interval':
-        return preds['lower_quantile']
-        ### The current evaluator during the train time expects just 1 output. Also, I'm not sure how to deal with the metrics...
-        # Most likely I can just leave the metrics alone for now???
-    else:
-        return preds
+
+    ### The current evaluator during the train time expects just 1 output. Also, I'm not sure how to deal with the metrics...
+    # Most likely I can just leave the metrics alone for now??? Just use the lower quantile for the metrics...
+    return preds
