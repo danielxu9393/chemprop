@@ -67,12 +67,7 @@ def train(model: MoleculeModel,
         # Run model
         model.zero_grad()
         preds = model(mol_batch, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
-
-        # Move tensors to correct device
-        if args.loss_function == 'quantile_interval':
-            torch_device = preds['lower_quantile'].device
-        else:
-            torch_device = preds.device
+        torch_device = preds.device
         
         mask = mask.to(torch_device)
         targets = targets.to(torch_device)
@@ -113,9 +108,8 @@ def train(model: MoleculeModel,
         elif args.loss_function == 'quantile':
             loss = loss_func(preds, targets, args.quantile) * target_weights * data_weights * mask
         elif args.loss_function == 'quantile_interval':
-            loss_upper = loss_func(preds['upper_quantile'], targets, 1-args.alpha/2) * target_weights * data_weights * mask
-            loss_lower = loss_func(preds['lower_quantile'], targets, args.alpha/2) * target_weights * data_weights * mask
-            loss = loss_upper + loss_lower
+            quantiles = torch.reshape(torch.tensor([args.alpha/2, 1-args.alpha/2]), (1,2)) # want a transposed vector...
+            loss = loss_func(preds, targets, quantiles) * target_weights * data_weights * mask
         else:
             loss = loss_func(preds, targets) * target_weights * data_weights * mask
         loss = loss.sum() / mask.sum()

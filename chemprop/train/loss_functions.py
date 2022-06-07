@@ -23,7 +23,7 @@ def get_loss_func(args: TrainArgs) -> Callable:
             "mve": normal_mve,
             "evidential": evidential_loss,
             "quantile": quantile_loss,
-            "quantile_interval": quantile_loss,
+            "quantile_interval": quantile_loss_batch,
         },
         "classification": {
             "binary_cross_entropy": nn.BCEWithLogitsLoss(reduction="none"),
@@ -253,6 +253,22 @@ def quantile_loss(pred_values, targets, quantile=0.5):
     error = targets - pred_values
 
     return torch.max((quantile - 1) * error, quantile * error)
+
+def quantile_loss_batch(pred_values, targets, quantiles):
+    """
+    Use the negative log likelihood function of a normal distribution as a loss function used for making
+    simultaneous predictions of the mean and error distribution variance simultaneously.
+
+    :param quantiles: Desired quantiles for model prediction
+    :return: A tensor loss value.
+    """
+    assert(pred_values.shape[0] == targets.shape[0])
+    assert(pred_values.shape[1] == quantiles.shape[1])
+
+    error = targets - pred_values
+
+    return torch.max((quantiles - 1) * error, quantiles * error) # very skethcy broadcasting...
+    #if default number of regression tasks is above 1, then this could be bad! How do we extend broadcasting?
 
 
 

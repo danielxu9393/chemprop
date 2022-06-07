@@ -175,6 +175,8 @@ def run_training(args: TrainArgs,
     test_smiles, test_targets = test_data.smiles(), test_data.targets()
     if args.dataset_type == 'multiclass':
         sum_test_preds = np.zeros((len(test_smiles), args.num_tasks, args.multiclass_num_classes))
+    elif args.loss_function == 'quantile_interval':
+        sum_test_preds = np.zeros((len(test_smiles), 2*args.num_tasks))
     else:
         sum_test_preds = np.zeros((len(test_smiles), args.num_tasks))
 
@@ -313,12 +315,16 @@ def run_training(args: TrainArgs,
         )
 
         if model.loss_function == 'quantile_interval':
-            test_preds = test_preds['lower_quantile']
+            #test_preds = test_preds[0] # Only using lower quantile for eval metrics
+            test_targets = [[x[0],x[0]] for x in test_targets]#need to do the repeat thingy later!
+            num_tasks = 2 * args.num_tasks
+        else:
+            num_tasks = args.num_tasks
 
         test_scores = evaluate_predictions(
             preds=test_preds,
             targets=test_targets,
-            num_tasks=args.num_tasks,
+            num_tasks=num_tasks, #changed from args.num_tasks
             metrics=args.metrics,
             dataset_type=args.dataset_type,
             gt_targets=test_data.gt_targets(),
@@ -345,10 +351,15 @@ def run_training(args: TrainArgs,
     # Evaluate ensemble on test set
     avg_test_preds = (sum_test_preds / args.ensemble_size).tolist()
 
+    if model.loss_function == 'quantile_interval':
+            #test_preds = test_preds[0] # Only using lower quantile for eval metrics
+            test_targets = [[x[0],x[0]] for x in test_targets]#need to do the repeat thingy later!
+            num_tasks = 2 * args.num_tasks
+
     ensemble_scores = evaluate_predictions(
         preds=avg_test_preds,
         targets=test_targets,
-        num_tasks=args.num_tasks,
+        num_tasks=num_tasks, # changed from args.num_tasks!
         metrics=args.metrics,
         dataset_type=args.dataset_type,
         gt_targets=test_data.gt_targets(),

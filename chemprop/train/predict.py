@@ -37,12 +37,7 @@ def predict(
             return activate_dropout(model, dropout_prob)
         model.apply(activate_dropout_)
 
-    if model.loss_function == 'quantile_interval':
-        preds=dict()
-        preds['upper_quantile'] = []
-        preds['lower_quantile'] = []
-    else:
-        preds = []
+    preds = []
 
     var, lambdas, alphas, betas = [], [], [], []  # only used if returning uncertainty parameters
 
@@ -65,11 +60,7 @@ def predict(
                 bond_features_batch,
             )
 
-        if model.loss_function == 'quantile_interval':
-            batch_preds['upper_quantile'] = batch_preds['upper_quantile'].data.cpu().numpy()
-            batch_preds['lower_quantile'] = batch_preds['lower_quantile'].data.cpu().numpy()
-        else:## Don't know what this is for
-            batch_preds = batch_preds.data.cpu().numpy()
+        batch_preds = batch_preds.data.cpu().numpy()
 
         if model.loss_function == "mve":
             batch_preds, batch_var = np.split(batch_preds, 2, axis=1)
@@ -90,16 +81,13 @@ def predict(
             batch_preds, batch_lambdas, batch_alphas, batch_betas = np.split(
                 batch_preds, 4, axis=1
             )
-        elif model.loss_function == 'quantile_interval':
-            batch_preds_lower_quantile = batch_preds['upper_quantile']
-            batch_preds_upper_quantile = batch_preds['lower_quantile']
 
         # Inverse scale if regression
         if scaler is not None:
-            if model.loss_function == 'quantile_interval':
-                batch_preds['lower_quantile'] = scaler.inverse_transform(batch_preds['lower_quantile'])
-                batch_preds['upper_quantile'] = scaler.inverse_transform(batch_preds['upper_quantile'])
-            else:## Don't know what this is for
+            if model.loss_function == 'quantile_intervalr':
+                batch_preds[0] = scaler.inverse_transform(batch_preds[0])
+                batch_preds[1] = scaler.inverse_transform(batch_preds[1])
+            else:
                 batch_preds = scaler.inverse_transform(batch_preds)
 
             if model.loss_function == "mve":
@@ -109,11 +97,11 @@ def predict(
 
         # Collect vectors
         
-        if model.loss_function == 'quantile_interval':
-            batch_preds['lower_quantile'] = batch_preds['lower_quantile'].tolist()
-            batch_preds['upper_quantile'] = batch_preds['upper_quantile'].tolist()
-            preds['lower_quantile'].extend(batch_preds['lower_quantile'])
-            preds['upper_quantile'].extend(batch_preds['upper_quantile'])
+        if model.loss_function == 'quantile_intervalr':
+            batch_preds[0] = batch_preds[0].tolist()
+            batch_preds[1] = batch_preds[1].tolist()
+            preds[0].extend(batch_preds[0])
+            preds[1].extend(batch_preds[1])
         else:
             batch_preds = batch_preds.tolist()
             preds.extend(batch_preds)
@@ -138,4 +126,5 @@ def predict(
 
     ### The current evaluator during the train time expects just 1 output. Also, I'm not sure how to deal with the metrics...
     # Most likely I can just leave the metrics alone for now??? Just use the lower quantile for the metrics...
+    print(preds)
     return preds

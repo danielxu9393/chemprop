@@ -299,7 +299,7 @@ def predict_and_save(
             else:
                 unc_names = [name + f"_{estimator.label}" for name in task_names]
  
-            # Separate loop because unc_names, d_unc should be twice the length of task_names, d_preds
+            # Separate loop because in conformal_regression, unc_names, d_unc should be twice the length of task_names, d_preds
             for pred_name, pred in zip(
                 task_names, d_preds
             ):

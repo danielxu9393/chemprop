@@ -44,7 +44,6 @@ class MoleculeModel(nn.Module):
             self.output_size *= 4  # return four evidential parameters: gamma, lambda, alpha, beta
         if self.loss_function == 'quantile_interval':
             self.output_size *= 2 # return upper and lower quantile bounds
-            ### Idk if this is able to save though... because is 1 layer lol...
 
         if self.classification:
             self.sigmoid = nn.Sigmoid()
@@ -118,23 +117,11 @@ class MoleculeModel(nn.Module):
                     dropout,
                     nn.Linear(args.ffn_hidden_size, args.ffn_hidden_size),
                 ])
-            if args.loss_function == 'quantile_interval':
-                self.lower_quantile_head = nn.Sequential(*[
-                    activation,
-                    dropout,
-                    nn.Linear(args.ffn_hidden_size, 1),
-                ])
-                self.upper_quantile_head = nn.Sequential(*[
-                    activation,
-                    dropout,
-                    nn.Linear(args.ffn_hidden_size, 1),
-                ])
-            else:
-                ffn.extend([
-                    activation,
-                    dropout,
-                    nn.Linear(args.ffn_hidden_size, self.output_size),
-                ])
+            ffn.extend([
+                activation,
+                dropout,
+                nn.Linear(args.ffn_hidden_size, self.output_size),
+            ])
 
 
         # If spectra model, also include spectra activation
@@ -232,11 +219,5 @@ class MoleculeModel(nn.Module):
             output = torch.cat([means, lambdas, alphas, betas], dim=1)
         if self.loss_function == 'dirichlet':
             output = nn.functional.softplus(output) + 1
-        if self.loss_function == 'quantile_interval':
-            output_lower = self.lower_quantile_head(output)
-            output_upper = self.upper_quantile_head(output)
-            output = dict()
-            output['lower_quantile'] = output_lower
-            output['upper_quantile'] = output_upper
 
         return output
