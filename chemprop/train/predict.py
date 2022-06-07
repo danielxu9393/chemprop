@@ -84,11 +84,7 @@ def predict(
 
         # Inverse scale if regression
         if scaler is not None:
-            if model.loss_function == 'quantile_intervalr':
-                batch_preds[0] = scaler.inverse_transform(batch_preds[0])
-                batch_preds[1] = scaler.inverse_transform(batch_preds[1])
-            else:
-                batch_preds = scaler.inverse_transform(batch_preds)
+            batch_preds = scaler.inverse_transform(batch_preds)
 
             if model.loss_function == "mve":
                 batch_var = batch_var * scaler.stds ** 2
@@ -96,15 +92,8 @@ def predict(
                 batch_betas = batch_betas * scaler.stds ** 2
 
         # Collect vectors
-        
-        if model.loss_function == 'quantile_intervalr':
-            batch_preds[0] = batch_preds[0].tolist()
-            batch_preds[1] = batch_preds[1].tolist()
-            preds[0].extend(batch_preds[0])
-            preds[1].extend(batch_preds[1])
-        else:
-            batch_preds = batch_preds.tolist()
-            preds.extend(batch_preds)
+        batch_preds = batch_preds.tolist()
+        preds.extend(batch_preds)
 
         if model.loss_function == "mve":
             var.extend(batch_var.tolist())
@@ -123,8 +112,4 @@ def predict(
         elif model.loss_function == "evidential":
             return preds, lambdas, alphas, betas
 
-
-    ### The current evaluator during the train time expects just 1 output. Also, I'm not sure how to deal with the metrics...
-    # Most likely I can just leave the metrics alone for now??? Just use the lower quantile for the metrics...
-    print(preds)
     return preds

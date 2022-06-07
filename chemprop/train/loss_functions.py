@@ -263,12 +263,12 @@ def quantile_loss_batch(pred_values, targets, quantiles):
     :return: A tensor loss value.
     """
     assert(pred_values.shape[0] == targets.shape[0])
+    assert(pred_values.shape[1] == targets.shape[1])
     assert(pred_values.shape[1] == quantiles.shape[1])
 
     error = targets - pred_values
 
-    return torch.max((quantiles - 1) * error, quantiles * error) # very skethcy broadcasting...
-    #if default number of regression tasks is above 1, then this could be bad! How do we extend broadcasting?
+    return torch.max((quantiles - 1) * error, quantiles * error)
 
 
 

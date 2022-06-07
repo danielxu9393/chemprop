@@ -42,8 +42,8 @@ class MoleculeModel(nn.Module):
             self.output_size *= 2  # return dirichlet parameters for positive and negative class
         if self.loss_function == 'evidential':
             self.output_size *= 4  # return four evidential parameters: gamma, lambda, alpha, beta
-        if self.loss_function == 'quantile_interval':
-            self.output_size *= 2 # return upper and lower quantile bounds
+        #if self.loss_function == 'quantile_interval':
+        #    self.output_size *= 2 # return upper and lower quantile bounds
 
         if self.classification:
             self.sigmoid = nn.Sigmoid()

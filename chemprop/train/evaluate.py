@@ -36,9 +36,6 @@ def evaluate_predictions(preds: List[List[float]],
     if len(preds) == 0:
         return {metric: [float('nan')] * num_tasks for metric in metrics}
 
-    #print("preds shape: ", (len(preds), len(preds[0])))
-    print("needed shape: ", (len(preds), num_tasks))
-
     # Filter out empty targets for most data types, excluding dataset_type spectra
     # valid_preds and valid_targets have shape (num_tasks, data_size)
     if dataset_type != 'spectra':
@@ -46,9 +43,6 @@ def evaluate_predictions(preds: List[List[float]],
         valid_targets = [[] for _ in range(num_tasks)]
         for i in range(num_tasks):
             for j in range(len(preds)):
-                print(i,j)
-                #print(targets)
-                #print(preds)
                 if targets[j][i] is not None:  # Skip those without targets
                     valid_preds[i].append(preds[j][i])
                     valid_targets[i].append(targets[j][i])
@@ -125,15 +119,10 @@ def evaluate(model: MoleculeModel,
         data_loader=data_loader,
         scaler=scaler
     )
-    if model.loss_function == 'quantile_interval':
-        targets = [[x[0],x[0]] for x in data_loader.targets]#need to do the repeat thingy later!
-        num_tasks = 2 * num_tasks
-    else:
-        targets = data_loader.targets
 
     results = evaluate_predictions(
         preds=preds,
-        targets=targets,
+        targets=data_loader.targets,
         num_tasks=num_tasks,
         metrics=metrics,
         dataset_type=dataset_type,
