@@ -108,10 +108,7 @@ def train(model: MoleculeModel,
         elif args.loss_function == 'quantile':
             loss = loss_func(preds, targets, args.quantile) * target_weights * data_weights * mask
         elif args.loss_function == 'quantile_interval':
-            num_tasks = preds.shape[1]
-            quantiles = [args.alpha/2] * (num_tasks//2) + [1-args.alpha/2] * (num_tasks//2)
-            quantiles = torch.reshape(torch.tensor([args.alpha/2, 1-args.alpha/2]), (1,num_tasks)) # want a transposed vector...
-            loss = loss_func(preds, targets, quantiles) * target_weights * data_weights * mask
+            loss = loss_func(preds, targets, torch.tensor([args.quantiles])) * target_weights * data_weights * mask
         else:
             loss = loss_func(preds, targets) * target_weights * data_weights * mask
         loss = loss.sum() / mask.sum()

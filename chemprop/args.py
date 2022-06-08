@@ -490,8 +490,17 @@ class TrainArgs(CommonArgs):
 
     @property
     def num_tasks(self) -> int:
-        """The number of tasks being trained on."""
+        """Quantiles to train on."""
         return len(self.task_names) if self.task_names is not None else 0
+
+    @property
+    def quantiles(self) -> List[float]:
+        """A list of names of the tasks being trained on."""
+        return self._quantiles
+
+    @quantiles.setter
+    def quantiles(self, quantiles: List[float]) -> None:
+        self._quantiles = quantiles
 
     @property
     def features_size(self) -> int:

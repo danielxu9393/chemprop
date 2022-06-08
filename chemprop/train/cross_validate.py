@@ -45,6 +45,8 @@ def cross_validate(args: TrainArgs,
                                      target_columns=args.target_columns, ignore_columns=args.ignore_columns,
                                      loss_function=args.loss_function)
 
+    args.quantiles = [args.alpha/2] * (args.num_tasks//2) + [1 - args.alpha/2] * (args.num_tasks//2)
+
     # Print command line
     debug('Command line')
     debug(f'python {" ".join(sys.argv)}')

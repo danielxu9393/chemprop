@@ -243,9 +243,9 @@ def predict_and_save(
         if args.uncertainty_method == "spectra_roundrobin":
             num_unc_tasks = 1
         elif args.calibration_method == "conformal_regression":
-            num_unc_tasks = 2
+            num_unc_tasks = 2 * num_tasks
         elif args.calibration_method == "conformal_quantile_regression":
-            num_unc_tasks = 2
+            num_unc_tasks = num_tasks
         else:
             num_unc_tasks = num_tasks
 
@@ -289,19 +289,24 @@ def predict_and_save(
                 for column, smiles in zip(smiles_columns, datapoint.smiles):
                     datapoint.row[column] = smiles
 
+            print_task_names = task_names
             # Add predictions columns
             if args.uncertainty_method == "spectra_roundrobin":
                 unc_names = [estimator.label]
             elif args.calibration_method == "conformal_regression":
-                unc_names = [task_names[0] + "_conformal_regression_lower_bound", task_names[0] + "_conformal_regression_upper_bound"]
+                unc_names = [task_name + "_conformal_regression_lower_bound" for task_name in task_names] \
+                + [task_name + "_conformal_regression_upper_bound" for task_name in task_names]
             elif args.calibration_method == "conformal_quantile_regression":
-                unc_names = [task_names[0] + "_conformal_quantile_regression_lower_bound", task_names[0] + "_conformal_quantile_regression_upper_bound"]
+                unc_names = [task_names[i] + "_conformal_quantile_regression_lower_bound" for i in range(0, num_tasks//2)] \
+                + [task_names[i] + "_conformal_quantile_regression_upper_bound" for i in range(num_tasks//2, num_tasks)]
+                print_task_names = [task_names[i] + "_quantile_lower_bound" for i in range(0, num_tasks//2)] \
+                + [task_names[i] + "_quantile_upper_bound" for i in range(num_tasks//2, num_tasks)]
             else:
                 unc_names = [name + f"_{estimator.label}" for name in task_names]
  
             # Separate loop because in conformal_regression, unc_names, d_unc should be twice the length of task_names, d_preds
             for pred_name, pred in zip(
-                task_names, d_preds
+                print_task_names, d_preds
             ):
                 datapoint.row[pred_name] = pred
 
@@ -429,7 +434,8 @@ def make_predictions(
         elif args.calibration_method == 'conformal_regression':
             args.uncertainty_method = None
         elif args.calibration_method == 'conformal_quantile_regression':
-            args.uncertainty_method = 'conformal_quantile_regression'
+            #args.uncertainty_method = 'conformal_quantile_regression'
+            args.uncertainty_method = None
         else:
             raise ValueError('Cannot calibrate or evaluate uncertainty without selection of an uncertainty method.')
 
