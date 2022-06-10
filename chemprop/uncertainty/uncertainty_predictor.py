@@ -174,82 +174,6 @@ class NoUncertaintyPredictor(UncertaintyPredictor):
     def get_uncal_output(self):
         return self.uncal_vars
 
-class ConformalQuantilePredictor(UncertaintyPredictor):
-    """
-    Predictor modified for use with conformal quantile regression calibrator. Output predictions modified.
-    """
-    @property
-    def label(self):
-        return "no_uncertainty_method"
-
-    def calculate_predictions(self):
-        for i, (model, scaler_list) in enumerate(
-            tqdm(zip(self.models, self.scalers), total=self.num_models)
-        ):
-            (
-                scaler,
-                features_scaler,
-                atom_descriptor_scaler,
-                bond_feature_scaler,
-            ) = scaler_list
-            if (
-                features_scaler is not None
-                or atom_descriptor_scaler is not None
-                or bond_feature_scaler is not None
-            ):
-                self.test_data.reset_features_and_targets()
-                if features_scaler is not None:
-                    self.test_data.normalize_features(features_scaler)
-                if atom_descriptor_scaler is not None:
-                    self.test_data.normalize_features(
-                        atom_descriptor_scaler, scale_atom_descriptors=True
-                    )
-                if bond_feature_scaler is not None:
-                    self.test_data.normalize_features(
-                        bond_feature_scaler, scale_bond_features=True
-                    )
-
-            preds = predict(
-                model=model,
-                data_loader=self.test_data_loader,
-                scaler=scaler,
-                return_unc_parameters=False,
-            )
-            if self.dataset_type == "spectra":#spectra maybe not compatible with conformal quantile regression
-                preds = normalize_spectra(
-                    spectra=preds,
-                    phase_features=self.test_data.phase_features(),
-                    phase_mask=self.spectra_phase_mask,
-                    excluded_sub_value=float("nan"),
-                )
-            if i == 0:
-                sum_preds = dict()
-                sum_preds['lower_quantile'] = np.array(preds['lower_quantile'])
-                sum_preds['upper_quantile'] = np.array(preds['upper_quantile'])
-                if self.individual_ensemble_predictions:
-                    individual_preds = dict()
-                    individual_preds['lower_quantile'] = np.expand_dims(np.array(preds['lower_quantile']), axis=-1)
-                    individual_preds['upper_quantile'] = np.expand_dims(np.array(preds['upper_quantile']), axis=-1)
-            else:
-                sum_preds['lower_quantile'] += np.array(preds['lower_quantile'])
-                sum_preds['upper_quantile'] += np.array(preds['upper_quantile'])
-                if self.individual_ensemble_predictions:
-                    individual_preds['lower_quantile'] = np.append(individual_preds['lower_quantile'], np.expand_dims(preds['lower_quantile'], axis=-1), axis=-1)
-                    individual_preds['upper_quantile'] = np.append(individual_preds['upper_quantile'], np.expand_dims(preds['upper_quantile'], axis=-1), axis=-1)
-
-        self.uncal_preds = dict()
-        self.uncal_preds['upper_quantile'] = (sum_preds['upper_quantile'] / self.num_models).tolist()
-        self.uncal_preds['lower_quantile'] = (sum_preds['lower_quantile'] / self.num_models).tolist()
-        
-        uncal_vars = np.zeros_like(sum_preds['lower_quantile'])
-        uncal_vars[:] = np.nan
-        self.uncal_vars = uncal_vars
-        if self.individual_ensemble_predictions:
-            self.individual_preds['upper_quantile'] = individual_preds['upper_quantile'].tolist()
-            self.individual_preds['lower_quantile'] = individual_preds['lower_quantile'].tolist()
-        
-    def get_uncal_output(self):
-        return self.uncal_vars
 
 class RoundRobinSpectraPredictor(UncertaintyPredictor):
     """
@@ -896,7 +820,6 @@ def build_uncertainty_predictor(
         "evidential_aleatoric": EvidentialAleatoricPredictor,
         "dropout": DropoutPredictor,
         "spectra_roundrobin": RoundRobinSpectraPredictor,
-        "conformal_quantile_regression": ConformalQuantilePredictor,
     }
 
     predictor_class = supported_predictors.get(uncertainty_method, None)

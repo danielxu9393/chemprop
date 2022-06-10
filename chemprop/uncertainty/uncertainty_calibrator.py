@@ -621,23 +621,23 @@ class IsotonicMulticlassCalibrator(UncertaintyCalibrator):
         return uncal_preds.tolist(), cal_preds.tolist()
 
 
-class ConformalCalibrator(UncertaintyCalibrator):
+class ConformalMulticlassCalibrator(UncertaintyCalibrator):
     """
     Conformal Calibrator.
     """
     @property
     def label(self):
-        return f"{self.uncertainty_method}_conformal"
+        return f"{self.uncertainty_method}_conformal_multiclass"
 
     def raise_argument_errors(self):
         super().raise_argument_errors()
-        if self.dataset_type != "classification":
+        if self.dataset_type != "multiclass":
             raise ValueError(
-                "Conformal is only implemented for classification dataset types."
+                "Conformal is only implemented for multiclass dataset types."
             )
 
     def s(self, i, j, uncal_preds):#x,y are the indices
-            return -uncal_preds[i][j]
+        return -uncal_preds[i][j]
 
     def calibrate(self):
         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
@@ -651,10 +651,6 @@ class ConformalCalibrator(UncertaintyCalibrator):
             if np.max(targets[i]) == 1:
                 calibration_set.append([i, np.argmax(targets[i])])
 
-            # for j in range(self.num_tasks):#Problem will arise if some data values have no classes.
-            #     if targets[i][j] == 1:
-            #         calibration_set.append([i, j])
-            #         break
         calibration_set = np.array(calibration_set, dtype=int)
 
 
@@ -679,69 +675,138 @@ class ConformalCalibrator(UncertaintyCalibrator):
         return uncal_preds.tolist(), cal_preds
 
 
-class ConformalAdaptiveCalibrator(ConformalCalibrator):
+class ConformalAdaptiveMulticlassCalibrator(ConformalMulticlassCalibrator):
     """
     Adaptive Conformal Calibrator.
     """
     @property
     def label(self):
-        return f"{self.uncertainty_method}_conformal_adaptive"
+        return f"{self.uncertainty_method}_conformal_adaptive_multiclass"
+
+    def raise_argument_errors(self):
+        super().raise_argument_errors()
+        if self.dataset_type != "multiclass":
+            raise ValueError(
+                "Conformal Adaptive is only implemented for multiclass dataset types."
+            )
+
+    def s_adaptive(self, i, j, uncal_preds):
+        K=uncal_preds.shape[1]
+        result = 0
+        for Y in range(K):
+            if uncal_preds[i][Y] >= uncal_preds[i][j]:
+                result += uncal_preds[i][Y]
+        return result
+
+
+class ConformalMultilabelCalibrator(UncertaintyCalibrator):
+    """
+    Conformal Calibrator.
+    """
+    @property
+    def label(self):
+        return f"{self.uncertainty_method}_conformal_multilabel"
 
     def raise_argument_errors(self):
         super().raise_argument_errors()
         if self.dataset_type != "classification":
             raise ValueError(
-                "Conformal Adaptive is only implemented for classification dataset types."
+                "Conformal is only implemented for classification dataset types."
             )
 
-    def s_adaptive(self, i, j, uncal_preds):
-            K=uncal_preds.shape[1]
-            result = 0
-            for Y in range(K):
-                if uncal_preds[i][Y] >= uncal_preds[i][j]:
-                    result += uncal_preds[i][Y]
-            return result
+    def s(self, i, j, uncal_preds):#x,y are the indices
+            return -uncal_preds[i][j]
+
+    def calibrate(self):
+        uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
+        targets = np.array(self.calibration_data.targets(), dtype=bool)  # shape(data, tasks)
+        targets = np.nan_to_num(targets, copy=True, nan=False, posinf=None, neginf=None)
+
+        (self.num_data, self.num_tasks) = targets.shape
+        calibration_scores_out = np.zeros(self.num_data)
+        calibration_scores_in = np.zeros(self.num_data)
+
+        for i in np.arange(self.num_data):
+            if uncal_preds[i][targets[i]].size == 0:
+                calibration_scores_out[i] = 1
+            else:
+                calibration_scores_out[i] = np.min(uncal_preds[i][targets[i]])
+
+            if uncal_preds[i][~targets[i]].size == 0:
+                calibration_scores_out[i] = 0
+            else:
+                calibration_scores_in[i] = np.max(uncal_preds[i][~targets[i]])
+
+        calibration_scores_out = np.sort(calibration_scores_out)
+        calibration_scores_in = np.sort(calibration_scores_in)
+
+        print(calibration_scores_out)
+        print(calibration_scores_in)
+        
+        self.tout_hat = np.quantile(calibration_scores_out, self.alpha/2)
+        self.tin_hat = np.quantile(calibration_scores_in, 1-self.alpha/2)
+
+        calibration_scores = np.zeros(self.num_data)
+        for i in np.arange(self.num_data):
+            calibration_scores[i] = -min(calibration_scores_out[i] - self.tout_hat,
+                                        self.tin_hat - calibration_scores_in[i])
+
+        calibration_scores = np.append(calibration_scores, np.Inf)
+        self.qhat = np.quantile(calibration_scores, 1-self.alpha)
+
+        self.tout = self.tout_hat - self.qhat
+        self.tin = self.tin_hat + self.qhat
+
+    def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
+        uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
+        (N, K) = uncal_preds.shape
+
+        cal_preds_in = (uncal_preds >= self.tin).astype(int)
+        cal_preds_out = (uncal_preds >= self.tout).astype(int)
+        cal_preds = np.concatenate((cal_preds_in, cal_preds_out), axis=1)
+
+        return uncal_preds.tolist(), cal_preds.tolist()
 
 
 class ConformalRegressionCalibrator(UncertaintyCalibrator):
-     """
-     Conformal Regression Calibrator.
-     """
-     @property
-     def label(self):
-         return f"{self.uncertainty_method}_conformal_regression"
+    """
+    Conformal Regression Calibrator.
+    """
+    @property
+    def label(self):
+        return f"{self.uncertainty_method}_conformal_regression"
 
-     def raise_argument_errors(self):
-         super().raise_argument_errors()
-         if self.dataset_type != "regression":
-             raise ValueError(
-                 "Conformal Regression is only implemented for regression dataset types."
-             )
+    def raise_argument_errors(self):
+        super().raise_argument_errors()
+        if self.dataset_type != "regression":
+            raise ValueError(
+                "Conformal Regression is only implemented for regression dataset types."
+            )
 
-     def calibrate(self):
-         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
-         targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
-         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
+    def calibrate(self):
+        uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
+        targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
+        targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
 
-         N = targets.shape[0]
-         calibration_scores = np.zeros(N+1)
-         for i in range(N):
-             calibration_scores[i] = targets[i] - uncal_preds[i]
+        N = targets.shape[0]
+        calibration_scores = np.zeros(N)
+        calibration_scores = targets - uncal_preds
 
-         calibration_scores[N] = np.Inf
-         calibration_scores = np.sort(np.absolute(calibration_scores))
-         self.qhat = np.quantile(calibration_scores, 1-self.alpha)
+        calibration_scores = np.append(calibration_scores, np.Inf)
+        calibration_scores = np.sort(np.absolute(calibration_scores))
+        self.qhat = np.quantile(calibration_scores, 1-self.alpha)
 
-     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
-         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
-         N = uncal_preds.shape[0]
-         intervals = np.zeros((N,2), dtype=float)
+    def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
+        uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
+        N = uncal_preds.shape[0]
+        intervals = np.zeros((N,2), dtype=float)
 
-         for i in range(N):
-             intervals[i][0] = uncal_preds[i] - self.qhat
-             intervals[i][1] = uncal_preds[i] + self.qhat
+        intervals = np.zeros((2,N), dtype=float)
+        intervals[0] = uncal_preds - self.qhat
+        intervals[1] = uncal_preds + self.qhat
+        intervals = np.transpose(intervals)
 
-         return uncal_preds.tolist(), intervals.tolist()
+        return uncal_preds.tolist(), intervals.tolist()
 
 
 class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
@@ -763,9 +828,6 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())
         uncal_preds_lower = np.transpose(uncal_preds)[0]
         uncal_preds_upper = np.transpose(uncal_preds)[1]
-        #print(uncal_preds)
-        #uncal_preds['lower_quantile'] = np.array(uncal_preds['lower_quantile'])
-        #uncal_preds['upper_quantile'] = np.array(uncal_preds['upper_quantile'])
 
         N = uncal_preds.shape[0]       
         num_tasks = uncal_preds.shape[1]//2
@@ -778,24 +840,16 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
         calibration_scores = np.append(calibration_scores, np.Inf)
         calibration_scores = np.sort(np.absolute(calibration_scores))
         self.qhat = np.quantile(calibration_scores,1-self.alpha)
-        print("QHAT CALCULATED SUCCESS", self.qhat)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
         uncal_preds_lower = np.transpose(uncal_preds)[0]
         uncal_preds_upper = np.transpose(uncal_preds)[1]
-        #uncal_preds['lower_quantile'] = np.array(uncal_preds['lower_quantile'])
-        #uncal_preds['upper_quantile'] = np.array(uncal_preds['upper_quantile'])
-        #uncal_preds=np.concatenate((uncal_preds['lower_quantile'], uncal_preds['upper_quantile']), axis=1)
 
         N = uncal_preds.shape[0]
         intervals = np.zeros((2,N), dtype=float)
         intervals[0] = uncal_preds_lower - self.qhat
         intervals[1] = uncal_preds_upper + self.qhat
-        #for i in range(N):
-        #    intervals[i][0] = uncal_preds[i][0] - self.qhat
-        #    intervals[i][1] = uncal_preds[i][1] + self.qhat
-
         intervals = np.transpose(intervals)
 
         return uncal_preds.tolist(), intervals.tolist()
@@ -838,8 +892,10 @@ def build_uncertainty_calibrator(
         "zelikman_interval": ZelikmanCalibrator,
         "mve_weighting": MVEWeightingCalibrator,
         "platt": PlattCalibrator,
-        "conformal": ConformalCalibrator,
-        "conformal_adaptive": ConformalAdaptiveCalibrator,
+        "conformal": ConformalMultilabelCalibrator
+        if dataset_type == "classification"
+        else ConformalAdaptiveMulticlassCalibrator,
+        "conformal_adaptive": ConformalAdaptiveMulticlassCalibrator,
         "conformal_regression": ConformalRegressionCalibrator,
         "conformal_quantile_regression": ConformalQuantileRegressionCalibrator,
         "isotonic": IsotonicCalibrator

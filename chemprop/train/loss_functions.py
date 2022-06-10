@@ -244,11 +244,7 @@ def normal_mve(pred_values, targets):
 
 def quantile_loss(pred_values, targets, quantile=0.5):
     """
-    Use the negative log likelihood function of a normal distribution as a loss function used for making
-    simultaneous predictions of the mean and error distribution variance simultaneously.
-
-    :param quantile: Desired quantile for model prediction
-    :return: A tensor loss value.
+    Pinball loss at desired quantile.
     """
     error = targets - pred_values
 
@@ -256,11 +252,7 @@ def quantile_loss(pred_values, targets, quantile=0.5):
 
 def quantile_loss_batch(pred_values, targets, quantiles):
     """
-    Use the negative log likelihood function of a normal distribution as a loss function used for making
-    simultaneous predictions of the mean and error distribution variance simultaneously.
-
-    :param quantiles: Desired quantiles for model prediction
-    :return: A tensor loss value.
+    Batched pinball loss at desired quantiles.
     """
     assert(pred_values.shape[0] == targets.shape[0])
     assert(pred_values.shape[1] == targets.shape[1])

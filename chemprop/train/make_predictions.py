@@ -244,8 +244,8 @@ def predict_and_save(
             num_unc_tasks = 1
         elif args.calibration_method == "conformal_regression":
             num_unc_tasks = 2 * num_tasks
-        elif args.calibration_method == "conformal_quantile_regression":
-            num_unc_tasks = num_tasks
+        elif args.calibration_method == "conformal" and args.dataset_type == "classification":
+            num_unc_tasks = 2 * num_tasks
         else:
             num_unc_tasks = num_tasks
 
@@ -301,6 +301,9 @@ def predict_and_save(
                 + [task_names[i] + "_conformal_quantile_regression_upper_bound" for i in range(num_tasks//2, num_tasks)]
                 print_task_names = [task_names[i] + "_quantile_lower_bound" for i in range(0, num_tasks//2)] \
                 + [task_names[i] + "_quantile_upper_bound" for i in range(num_tasks//2, num_tasks)]
+            elif args.calibration_method == "conformal" and args.dataset_type == "classification":
+                unc_names = [task_name + "_conformal_in_set" for task_name in task_names] \
+                + [task_name + "_conformal_out_set" for task_name in task_names]
             else:
                 unc_names = [name + f"_{estimator.label}" for name in task_names]
  

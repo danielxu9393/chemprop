@@ -197,7 +197,7 @@ The loss functions available for training are dependent on the selected dataset 
 * **Classification.** binary_cross_entropy (default), mcc (a soft version of Matthews Correlation Coefficient), dirichlet (a.k.a. evidential classification)
 * **Multiclass.** cross_entropy (default), mcc (a soft version of Matthews Correlation Coefficient)
 * **Spectra.** sid (default, spectral information divergence), wasserstein (First-order Wasserstein distance a.k.a. earthmover's distance.)
-* **Quantile Loss.** quantile_interval (specify margins with `--alpha <float>`.)
+* **Quantile Loss.** quantile_interval (Pinball loss, specify margins with `--alpha <float>`.)
 
 The regression loss functions `mve` and `evidential` function by minimizing the negative log likelihood of a predicted uncertainty distribution. If used during training, the uncertainty predictions from these loss functions can be used for uncertainty prediction during prediction tasks.
 ### Metrics
