@@ -636,42 +636,40 @@ class ConformalMulticlassCalibrator(UncertaintyCalibrator):
                 "Conformal is only implemented for multiclass dataset types."
             )
 
-    def s(self, i, j, uncal_preds):#x,y are the indices
+    def nonconformity_score(self, i, j, uncal_preds):#x,y are the indices
         return -uncal_preds[i][j]
 
     def calibrate(self):
         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
-        targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
+        targets = np.array(self.calibration_data.targets(), dtype=int)  # shape(data, tasks)
         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
         
         (self.num_data, self.num_tasks) = targets.shape
         calibration_set=[]
 
         for i in np.arange(self.num_data):
-            if np.max(targets[i]) == 1:
-                calibration_set.append([i, np.argmax(targets[i])])
+            calibration_set.append([i, targets[i]])
 
         calibration_set = np.array(calibration_set, dtype=int)
 
-
-        def calculate_qhat(calibration_set, uncal_preds, s, alpha):
+        def calculate_qhat(calibration_set, uncal_preds, nonconformity_score, alpha):
             num_valid_data = calibration_set.shape[0]
             calibration_scores = np.zeros(num_valid_data+1)
 
             for i in range(num_valid_data):
-                calibration_scores[i] = s(calibration_set[i][0], calibration_set[i][1], uncal_preds)
+                calibration_scores[i] = nonconformity_score(calibration_set[i][0], calibration_set[i][1], uncal_preds)
 
             calibration_scores[num_valid_data] = np.Inf
             calibration_scores = np.sort(calibration_scores)
             qhat = np.quantile(calibration_scores, 1-alpha)
             return qhat
 
-        self.qhat = calculate_qhat(calibration_set, uncal_preds, self.s, self.alpha)
+        self.qhat = calculate_qhat(calibration_set, uncal_preds, self.nonconformity_score, self.alpha)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
         (N, K) = uncal_preds.shape
-        cal_preds=[[int(self.s(i, j, uncal_preds) <= self.qhat) for j in range(K)] for i in range(N)]
+        cal_preds=[[int(self.nonconformity_score(i, j, uncal_preds) <= self.qhat) for j in range(K)] for i in range(N)]
         return uncal_preds.tolist(), cal_preds
 
 
@@ -690,7 +688,7 @@ class ConformalAdaptiveMulticlassCalibrator(ConformalMulticlassCalibrator):
                 "Conformal Adaptive is only implemented for multiclass dataset types."
             )
 
-    def s_adaptive(self, i, j, uncal_preds):
+    def nonconformity_score(self, i, j, uncal_preds):
         K=uncal_preds.shape[1]
         result = 0
         for Y in range(K):
