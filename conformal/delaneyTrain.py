@@ -36,3 +36,7 @@ if __name__ ==  '__main__':
 #5.23 Meeting:
 #python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints2 --preds_path delaney_preds_conformal.csv --uncertainty_method dropout --calibration_method conformal_regression --calibration_path data/delaneysmall.csv
 #Now it should work fine in the save function!
+
+
+#Final:
+#python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints2 --preds_path delaney_preds_conformal.csv --calibration_method conformal_regression --calibration_path data/delaneysmall.csv

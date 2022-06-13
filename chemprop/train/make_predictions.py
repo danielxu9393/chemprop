@@ -437,7 +437,6 @@ def make_predictions(
         elif args.calibration_method == 'conformal_regression':
             args.uncertainty_method = None
         elif args.calibration_method == 'conformal_quantile_regression':
-            #args.uncertainty_method = 'conformal_quantile_regression'
             args.uncertainty_method = None
         else:
             raise ValueError('Cannot calibrate or evaluate uncertainty without selection of an uncertainty method.')

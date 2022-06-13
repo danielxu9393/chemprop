@@ -648,6 +648,8 @@ class ConformalMulticlassCalibrator(UncertaintyCalibrator):
         self.num_tasks = targets.shape[1]
         self.num_classes = uncal_preds.shape[2]
 
+        self.alpha = self.alpha/self.num_tasks # naive Bonferroni correction
+
         self.qhat = [0]*self.num_tasks
 
         for task_id in range(self.num_tasks):
@@ -744,9 +746,6 @@ class ConformalMultilabelCalibrator(UncertaintyCalibrator):
 
         calibration_scores_out = np.sort(calibration_scores_out)
         calibration_scores_in = np.sort(calibration_scores_in)
-
-        print(calibration_scores_out)
-        print(calibration_scores_in)
         
         self.tout_hat = np.quantile(calibration_scores_out, self.alpha/2)
         self.tin_hat = np.quantile(calibration_scores_in, 1-self.alpha/2)
@@ -794,21 +793,33 @@ class ConformalRegressionCalibrator(UncertaintyCalibrator):
         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
 
         N = targets.shape[0]
-        calibration_scores = np.zeros(N)
-        calibration_scores = targets - uncal_preds
+        self.num_tasks = uncal_preds.shape[1]
+        self.qhat = [0]*self.num_tasks
 
-        calibration_scores = np.append(calibration_scores, np.Inf)
-        calibration_scores = np.sort(np.absolute(calibration_scores))
-        self.qhat = np.quantile(calibration_scores, 1-self.alpha)
+        self.alpha = self.alpha/self.num_tasks # naive Bonferroni correction
+
+        for task_id in range(self.num_tasks):
+            targets_task_id = np.transpose(targets)[task_id]
+            uncal_preds_task_id = np.transpose(uncal_preds)[task_id]
+            print(targets_task_id)
+            print(uncal_preds_task_id)
+            calibration_scores = np.zeros(N)
+            calibration_scores = targets_task_id - uncal_preds_task_id
+
+            calibration_scores = np.append(calibration_scores, np.Inf)
+            calibration_scores = np.sort(np.absolute(calibration_scores))
+            self.qhat[task_id] = np.quantile(calibration_scores, 1-self.alpha)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
         N = uncal_preds.shape[0]
-        intervals = np.zeros((N,2), dtype=float)
+        intervals = np.zeros((2*self.num_tasks, N), dtype=float)
 
-        intervals = np.zeros((2,N), dtype=float)
-        intervals[0] = uncal_preds - self.qhat
-        intervals[1] = uncal_preds + self.qhat
+        for task_id in range(self.num_tasks):
+            uncal_preds_task_id = np.transpose(uncal_preds)[task_id]
+            intervals[2*task_id] = uncal_preds_task_id - self.qhat[task_id]
+            intervals[2*task_id + 1] = uncal_preds_task_id + self.qhat[task_id]
+
         intervals = np.transpose(intervals)
 
         return uncal_preds.tolist(), intervals.tolist()
@@ -831,30 +842,38 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
 
     def calibrate(self):
         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())
-        uncal_preds_lower = np.transpose(uncal_preds)[0]
-        uncal_preds_upper = np.transpose(uncal_preds)[1]
-
-        N = uncal_preds.shape[0]       
-        num_tasks = uncal_preds.shape[1]//2
-
         targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
-        targets = np.transpose(targets)[0]
 
-        calibration_scores = np.maximum(uncal_preds_lower - targets, targets - uncal_preds_upper)
-        calibration_scores = np.append(calibration_scores, np.Inf)
-        calibration_scores = np.sort(np.absolute(calibration_scores))
-        self.qhat = np.quantile(calibration_scores,1-self.alpha)
+        N = uncal_preds.shape[0]       
+        self.num_tasks = uncal_preds.shape[1]//2
+        self.qhat = [0]*self.num_tasks
+
+        self.alpha = self.alpha/self.num_tasks # naive Bonferroni correction
+        
+        for task_id in range(self.num_tasks):
+            targets_task_id = np.transpose(targets)[task_id]
+            uncal_preds_lower = np.transpose(uncal_preds)[2*task_id]
+            uncal_preds_upper = np.transpose(uncal_preds)[2*task_id + 1]
+
+            calibration_scores = np.maximum(uncal_preds_lower - targets_task_id, targets_task_id - uncal_preds_upper)
+            calibration_scores = np.append(calibration_scores, np.Inf)
+            calibration_scores = np.sort(np.absolute(calibration_scores))
+            self.qhat[task_id] = np.quantile(calibration_scores,1-self.alpha)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
-        uncal_preds_lower = np.transpose(uncal_preds)[0]
-        uncal_preds_upper = np.transpose(uncal_preds)[1]
-
         N = uncal_preds.shape[0]
-        intervals = np.zeros((2,N), dtype=float)
-        intervals[0] = uncal_preds_lower - self.qhat
-        intervals[1] = uncal_preds_upper + self.qhat
+        intervals = np.zeros((2*self.num_tasks, N), dtype=float)
+
+        for task_id in range(self.num_tasks):
+            uncal_preds_lower = np.transpose(uncal_preds)[2*task_id]
+            uncal_preds_upper = np.transpose(uncal_preds)[2*task_id + 1]
+
+            
+            intervals[2*task_id] = uncal_preds_lower - self.qhat[task_id]
+            intervals[2*task_id + 1] = uncal_preds_upper + self.qhat[task_id]
+        
         intervals = np.transpose(intervals)
 
         return uncal_preds.tolist(), intervals.tolist()
