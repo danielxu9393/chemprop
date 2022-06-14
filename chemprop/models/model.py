@@ -121,7 +121,6 @@ class MoleculeModel(nn.Module):
                 nn.Linear(args.ffn_hidden_size, self.output_size),
             ])
 
-
         # If spectra model, also include spectra activation
         if args.dataset_type == 'spectra':
             if args.spectra_activation == 'softplus':

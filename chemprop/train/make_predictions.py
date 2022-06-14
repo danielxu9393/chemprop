@@ -434,14 +434,10 @@ def make_predictions(
     if args.uncertainty_method is None and (args.calibration_method is not None or args.evaluation_methods is not None):
         if args.dataset_type in ['classification', 'multiclass']:
             args.uncertainty_method = 'classification'
-        elif args.calibration_method == 'conformal_regression':
-            args.uncertainty_method = None
-        elif args.calibration_method == 'conformal_quantile_regression':
+        elif args.calibration_method in ['conformal_regression', 'conformal_quantile_regression']:
             args.uncertainty_method = None
         else:
             raise ValueError('Cannot calibrate or evaluate uncertainty without selection of an uncertainty method.')
-
-
 
     if calibrator is None and args.calibration_path is not None:
 

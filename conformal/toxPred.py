@@ -1,13 +1,17 @@
 import sys
 sys.path.append('../')
+sys.path.append('../../')
+sys.path.append('/Users/danxu/Desktop/UROP Spring 2022')
 
 
 import chemprop
 
 arguments = [
     '--test_path', 'data/tox21.csv',
-    '--preds_path', 'tox21_preds.csv',
-    '--checkpoint_dir', 'tox21_checkpoints'
+    '--preds_path', 'tox21_preds_conformal_multilabel.csv',
+    '--checkpoint_dir', 'tox21_checkpoints2',
+    '--calibration_method', 'conformal',
+    '--calibration_path', 'data/tox21small.csv'
 ]
 
 args = chemprop.args.PredictArgs().parse_args(arguments)

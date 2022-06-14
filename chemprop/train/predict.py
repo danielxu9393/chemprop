@@ -85,7 +85,6 @@ def predict(
         # Inverse scale if regression
         if scaler is not None:
             batch_preds = scaler.inverse_transform(batch_preds)
-
             if model.loss_function == "mve":
                 batch_var = batch_var * scaler.stds ** 2
             elif model.loss_function == "evidential":

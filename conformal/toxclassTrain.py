@@ -15,3 +15,4 @@ if __name__ ==  '__main__':
 #Prediction:
 #python3 ../predict.py --test_path data/tox21smallclass.csv --checkpoint_dir tox21_class_checkpoints --preds_path tox21_preds_multiclass.csv
 #python3 ../predict.py --test_path data/tox21smallclass.csv --checkpoint_dir tox21_class_checkpoints --preds_path tox21_preds_conformal_multiclass.csv --calibration_method conformal --calibration_path data/tox21smallclass.csv
+#python3 ../predict.py --test_path data/tox21smallclass.csv --checkpoint_dir tox21_class_checkpoints --preds_path tox21_preds_conformal_adaptive_multiclass.csv --calibration_method conformal_adaptive --calibration_path data/tox21smallclass.csv

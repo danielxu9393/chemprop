@@ -108,7 +108,7 @@ def train(model: MoleculeModel,
         elif args.loss_function == 'quantile':
             loss = loss_func(preds, targets, args.quantile) * target_weights * data_weights * mask
         elif args.loss_function == 'quantile_interval':
-            loss = loss_func(preds, targets, torch.tensor([args.quantiles])) * target_weights * data_weights * mask
+            loss = loss_func(preds, targets, torch.tensor([args.quantiles]).to(torch_device)) * target_weights * data_weights * mask
         else:
             loss = loss_func(preds, targets) * target_weights * data_weights * mask
         loss = loss.sum() / mask.sum()
