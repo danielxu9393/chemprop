@@ -663,24 +663,16 @@ class ConformalMulticlassCalibrator(UncertaintyCalibrator):
         self.qhats = []
 
         for task_id in range(self.num_tasks):
-            calibration_scores = np.zeros(num_data)
-            #scores_task_id = np.take(all_scores, (task_id,), axis=1).squeeze(axis=1) # shape(data, num_classes)
-            scores_task_id = all_scores[:, task_id] # shape(data, num_classes)
-            # np.expand_dims(targets[:, task_id], -1) has shape(data, 1)
             # Extract scores for true targets for current task
             task_scores = np.take_along_axis(all_scores[:, task_id], np.expand_dims(targets[:, task_id], -1), axis=1).squeeze(axis=1)
-            print("newly task scores", task_scores)
+
             # Only keep valid data
             print(mask[:, task_id])
             task_scores = task_scores[mask[:, task_id]] # shape(valid_data)
-            print("masked task scores", task_scores)
             
-            # Pad scores with +Inf
-            #task_scores = np.pad(task_scores, (0, 1), "constant", constant_values=np.Inf)
+            # Pad scores with +Inf and sort
             task_scores = np.append(task_scores, np.Inf)
-            print("pad with inf", task_scores)
             task_scores = np.sort(task_scores)
-            print("sorted task scores", task_scores)
 
             #Compute empirical quantile
             qhat = np.quantile(task_scores, 1 - self.alpha / self.num_tasks)
