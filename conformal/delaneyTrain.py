@@ -39,4 +39,4 @@ if __name__ ==  '__main__':
 
 
 #Final:
-#python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints2 --preds_path delaney_preds_conformal.csv --calibration_method conformal_regression --calibration_path data/delaneysmall.csv
+#python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints2 --preds_path delaney_preds_conformal_new.csv --calibration_method conformal_regression --calibration_path data/delaneysmall.csv

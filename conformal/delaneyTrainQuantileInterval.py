@@ -14,5 +14,6 @@ if __name__ ==  '__main__':
 
 
 #python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints_quantile_interval --preds_path delaney_preds_conformal_quantile_interval.csv --calibration_method conformal_quantile_regression --calibration_path data/delaneysmall.csv
+#python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints_quantile_interval --preds_path delaney_preds_conformal_quantile_interval_new.csv --calibration_method conformal_quantile_regression --calibration_path data/delaneysmall.csv
 
 #python3 ../predict.py --test_path data/delaney.csv --checkpoint_dir delaney_checkpoints_quantile_interval05 --preds_path delaney_preds_conformal_quantile_interval05.csv --calibration_method conformal_quantile_regression --alpha 0.5 --calibration_path data/delaneysmall.csv
