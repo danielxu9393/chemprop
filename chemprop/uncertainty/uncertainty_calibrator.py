@@ -756,30 +756,31 @@ class ConformalMultilabelCalibrator(UncertaintyCalibrator):
         targets = np.array(self.calibration_data.targets(), dtype=bool)  # shape(data, tasks)
         (self.num_data, self.num_tasks) = targets.shape
 
+        # Calculate calibration scores for in set
         has_zeros = np.sum(targets==0, axis=1) > 0
         inds_zeros = targets[has_zeros] == 0
         scores_in = self.nonconformity_scores(uncal_preds[has_zeros])
-        masked_scores_in = scores_in * inds_zeros
+        masked_scores_in = scores_in * inds_zeros + np.nan_to_num(-np.Inf * (1 - inds_zeros).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
         calibration_scores_in = np.max(masked_scores_in, axis=1)
 
+        # Calculate calibration scores for out set
         has_ones = np.sum(targets==1, axis=1) > 0
         inds_ones = targets[has_ones] == 1
         scores_out = self.nonconformity_scores(uncal_preds[has_ones])
-        masked_scores_out = scores_out * inds_ones + 1000 * (1 - inds_ones)
+        #masked_scores_out = scores_out * inds_ones + 1000 * (1 - inds_ones)
+        masked_scores_out = scores_out * inds_ones + np.nan_to_num(np.Inf * (1 - inds_ones).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
         calibration_scores_out = np.min(masked_scores_out, axis=1)
-
-        calibration_scores_out = np.sort(calibration_scores_out)
-        calibration_scores_in = np.sort(calibration_scores_in)
         
         self.tout = np.quantile(calibration_scores_out, self.alpha / 2)
         self.tin = np.quantile(calibration_scores_in, 1 - self.alpha / 2)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
+        scores = self.nonconformity_scores(uncal_preds)
         #(N, K) = uncal_preds.shape
 
-        cal_preds_in = (uncal_preds >= self.tin).astype(int)
-        cal_preds_out = (uncal_preds >= self.tout).astype(int)
+        cal_preds_in = (scores >= self.tin).astype(int)
+        cal_preds_out = (scores >= self.tout).astype(int)
         cal_preds = np.concatenate((cal_preds_in, cal_preds_out), axis=1)
 
         return uncal_preds.tolist(), cal_preds.tolist()
@@ -808,8 +809,7 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
         uncal_preds = self.get_preds(self.calibration_predictor) # shape(data, 2 * tasks)
         targets = np.array(self.calibration_data.targets(), dtype=float)  # shape(data, tasks)
         targets = np.nan_to_num(targets, copy=True, nan=0.0, posinf=None, neginf=None)
-
-        #N = uncal_preds.shape[0]       
+     
         self.num_tasks = uncal_preds.shape[1] // 2
         self.qhats = []
         
@@ -821,7 +821,10 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
             calibration_scores = np.maximum(uncal_preds_lower - targets_task_id, targets_task_id - uncal_preds_upper)
             calibration_scores = np.append(calibration_scores, np.Inf)
             calibration_scores = np.sort(np.absolute(calibration_scores))
-            self.qhats.append(np.quantile(calibration_scores,1 - self.alpha / self.num_tasks))
+            print(calibration_scores)
+            self.qhats.append(np.quantile(calibration_scores, 1 - self.alpha / self.num_tasks))
+
+        print(self.qhats)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = self.get_preds(uncal_predictor)  # shape(data, task)
