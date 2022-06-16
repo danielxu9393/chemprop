@@ -65,3 +65,8 @@ y = np.array([1,2,3,4,5,6])
 
 y = np.append(y, np.Inf)
 print(y)
+
+x = np.array([1,2,3,4], dtype=float)
+y = np.array([True, True, False, False], dtype=bool)
+print(x * y)
+print(x * (1-y))
