@@ -1,6 +1,7 @@
 *.pyc
 conformal/
 #test_plan/
+test_plan/data
 *.json
 
 # Compiled source #
