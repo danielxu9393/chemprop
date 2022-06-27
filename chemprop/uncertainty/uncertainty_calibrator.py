@@ -773,8 +773,6 @@ class ConformalMultilabelCalibrator(UncertaintyCalibrator):
         
         self.tout = np.quantile(calibration_scores_out, self.alpha / 2)
         self.tin = np.quantile(calibration_scores_in, 1 - self.alpha / 2)
-        print(self.tout)
-        print(self.tin)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
@@ -822,9 +820,12 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
             uncal_preds_upper = uncal_preds[:, task_id + self.num_tasks]
 
             calibration_scores = np.maximum(uncal_preds_lower - targets_task_id, targets_task_id - uncal_preds_upper)
+            print(calibration_scores)
             calibration_scores = np.append(calibration_scores, np.Inf)
             calibration_scores = np.sort(np.absolute(calibration_scores))
-            self.qhats.append(np.quantile(calibration_scores,1 - self.alpha / self.num_tasks))
+            self.qhats.append(np.quantile(calibration_scores, 1 - self.alpha / self.num_tasks))
+
+        print(self.qhats)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = self.get_preds(uncal_predictor)  # shape(data, task)
