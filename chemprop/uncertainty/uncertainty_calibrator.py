@@ -819,9 +819,9 @@ class ConformalQuantileRegressionCalibrator(UncertaintyCalibrator):
             uncal_preds_upper = uncal_preds[:, task_id + self.num_tasks]
 
             calibration_scores = np.maximum(uncal_preds_lower - targets_task_id, targets_task_id - uncal_preds_upper)
+            print(calibration_scores)
             calibration_scores = np.append(calibration_scores, np.Inf)
             calibration_scores = np.sort(np.absolute(calibration_scores))
-            print(calibration_scores)
             self.qhats.append(np.quantile(calibration_scores, 1 - self.alpha / self.num_tasks))
 
         print(self.qhats)
