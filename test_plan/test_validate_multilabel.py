@@ -26,6 +26,7 @@ for alpha in alpha_list:
         task_results = np.logical_and(in_set <= task_targets, task_targets <= out_set)
         results = np.logical_and(results, task_results)
         coverage_id[task] = task_results.sum() / task_results.shape[0]
+        # There shouldn't be any per task coverage guarantee as the bound is over all tasks together.
 
     print(results)
     coverage = results.sum() / results.shape[0]
