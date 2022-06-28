@@ -1,11 +1,7 @@
 *.pyc
 conformal/
-<<<<<<< HEAD
 #test_plan/
 test_plan/data
-=======
-test_plan/
->>>>>>> c31e58f579bb0912299bbe418fd20eed03142aa3
 *.json
 
 # Compiled source #
