@@ -67,8 +67,9 @@ def train(model: MoleculeModel,
         # Run model
         model.zero_grad()
         preds = model(mol_batch, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
-        torch_device = preds.device
         
+        # Move tensors to correct device
+        torch_device = preds.device
         mask = mask.to(torch_device)
         targets = targets.to(torch_device)
         target_weights = target_weights.to(torch_device)

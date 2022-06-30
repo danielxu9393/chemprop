@@ -311,7 +311,6 @@ def run_training(args: TrainArgs,
             data_loader=test_data_loader,
             scaler=scaler
         )
-
         test_scores = evaluate_predictions(
             preds=test_preds,
             targets=test_targets,

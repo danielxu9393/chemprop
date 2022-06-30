@@ -93,7 +93,6 @@ def predict(
         # Collect vectors
         batch_preds = batch_preds.tolist()
         preds.extend(batch_preds)
-
         if model.loss_function == "mve":
             var.extend(batch_var.tolist())
         elif model.loss_function == "dirichlet" and model.classification:

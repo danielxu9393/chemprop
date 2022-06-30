@@ -7,12 +7,10 @@ from scipy.special import erfinv, softmax, logit, expit
 from scipy.optimize import least_squares, fmin
 from scipy.stats import t
 from sklearn.isotonic import IsotonicRegression
-import math
 
 from chemprop.data import MoleculeDataset, StandardScaler
 from chemprop.models import MoleculeModel
 from chemprop.uncertainty.uncertainty_predictor import build_uncertainty_predictor, UncertaintyPredictor
-
 
 
 class UncertaintyCalibrator(ABC):
@@ -749,7 +747,7 @@ class ConformalMultilabelCalibrator(UncertaintyCalibrator):
         Returns:                                                                                                                                                                                                                                                                  
             scores: [num_examples, num_tasks, num_classes]                                                                                                                                                                                                                        
         """
-        return uncal_preds
+        return -uncal_preds
 
     def calibrate(self):
         uncal_preds = np.array(self.calibration_predictor.get_uncal_preds())  # shape(data, tasks, num_classes)
@@ -760,26 +758,25 @@ class ConformalMultilabelCalibrator(UncertaintyCalibrator):
         has_zeros = np.sum(targets==0, axis=1) > 0
         inds_zeros = targets[has_zeros] == 0
         scores_in = self.nonconformity_scores(uncal_preds[has_zeros])
-        masked_scores_in = scores_in * inds_zeros + np.nan_to_num(-np.Inf * (1 - inds_zeros).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
-        calibration_scores_in = np.max(masked_scores_in, axis=1)
+        masked_scores_in = scores_in * inds_zeros + np.nan_to_num(np.Inf * (1 - inds_zeros).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
+        calibration_scores_in = np.min(masked_scores_in, axis=1)
 
         # Calculate calibration scores for out set
         has_ones = np.sum(targets==1, axis=1) > 0
         inds_ones = targets[has_ones] == 1
         scores_out = self.nonconformity_scores(uncal_preds[has_ones])
-        masked_scores_out = scores_out * inds_ones + np.nan_to_num(np.Inf * (1 - inds_ones).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
-        calibration_scores_out = np.min(masked_scores_out, axis=1)
+        masked_scores_out = scores_out * inds_ones + np.nan_to_num(-np.Inf * (1 - inds_ones).astype(float), copy=True, nan=0.0, posinf=None, neginf=None)
+        calibration_scores_out = np.max(masked_scores_out, axis=1)
         
-        self.tout = np.quantile(calibration_scores_out, self.alpha / 2)
-        self.tin = np.quantile(calibration_scores_in, 1 - self.alpha / 2)
+        self.tout = np.quantile(calibration_scores_out, 1 - self.alpha / 2)
+        self.tin = np.quantile(calibration_scores_in, self.alpha / 2)
 
     def apply_calibration(self, uncal_predictor: UncertaintyPredictor):
         uncal_preds = np.array(uncal_predictor.get_uncal_preds())  # shape(data, task)
         scores = self.nonconformity_scores(uncal_preds)
-        #(N, K) = uncal_preds.shape
 
-        cal_preds_in = (scores >= self.tin).astype(int)
-        cal_preds_out = (scores >= self.tout).astype(int)
+        cal_preds_in = (scores <= self.tin).astype(int)
+        cal_preds_out = (scores <= self.tout).astype(int)
         cal_preds = np.concatenate((cal_preds_in, cal_preds_out), axis=1)
 
         return uncal_preds.tolist(), cal_preds.tolist()
@@ -855,7 +852,7 @@ class ConformalRegressionCalibrator(ConformalQuantileRegressionCalibrator):
 
     @staticmethod
     def get_preds(predictor: UncertaintyPredictor):
-        preds = np.array(predictor.get_uncal_preds()) # shape 
+        preds = np.array(predictor.get_uncal_preds())
 
         # duplicate preds to simulate upper and lower quantile
         preds_duplicated = np.concatenate((preds, preds), axis=1)
