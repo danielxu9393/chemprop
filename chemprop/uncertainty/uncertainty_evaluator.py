@@ -412,35 +412,31 @@ class ConformalRegressionEvaluator(UncertaintyEvaluator):
 
     def evaluate(
         self,
-        targets: List[List[float]], # shape (data, tasks)
+        targets: List[List[float]],
         preds: List[List[float]],
-        uncertainties: List[List[float]], # shape (data, 2*tasks)
+        uncertainties: List[List[float]],
         mask: List[List[bool]],
     ):
         """
         Args:
             targets: shape(data, tasks)
-            preds: shape(data, tasks, num_classes)
-            uncertainties: shape(data, 2*tasks, num_classes)
+            preds: shape(data, tasks)
+            uncertainties: shape(data, 2*tasks)
             mask: shape(data, tasks)
 
         Returns:
             Conformal coverage for each task
         """
-        targets = np.array(targets)
-        mask = np.array(mask, dtype=bool)
-        uncertainties = np.array(uncertainties)
-        num_tasks = uncertainties.shape[1]//2
-        results = []
-
-        for task_id in range(num_tasks):
-            unc_task_id_lower = uncertainties[mask[:, task_id], task_id]
-            unc_task_id_upper = uncertainties[mask[:, task_id], task_id + num_tasks]
-            targets_task_id = targets[mask[:, task_id], task_id]
-            task_results = np.logical_and(unc_task_id_lower <= targets_task_id, targets_task_id <= unc_task_id_upper)
-            results.append(task_results.sum() / task_results.shape[0])
-
-        return results
+        num_tasks = uncertainties.shape[1] // 2
+        coverages = []
+        for i in range(num_tasks):
+            task_unc_lower = uncertainties[mask[:, i], i]
+            task_unc_upper = uncertainties[mask[:, i], i + num_tasks]
+            task_targets = targets[mask[:, i], i]
+            task_results = np.logical_and(task_unc_lower <= task_targets, task_targets <= task_unc_upper)
+            coverage = task_results.sum() / task_results.shape[0]
+            coverages.append(coverage)
+        return coverages
 
 
 class ConformalMulticlassEvaluator(UncertaintyEvaluator):
@@ -476,15 +472,16 @@ class ConformalMulticlassEvaluator(UncertaintyEvaluator):
         mask = np.array(mask, dtype=bool)
         uncertainties = np.array(uncertainties)
         num_tasks = targets.shape[1]
-        results = []
+        coverages = []
 
-        for task_id in range(num_tasks):
+        for i in range(num_tasks):
             task_results = np.take_along_axis(
-                uncertainties[mask[:, task_id], task_id], targets[mask[:, task_id], task_id].reshape(-1, 1).astype(int), axis=1
+                uncertainties[mask[:, i], i], targets[mask[:, i], i].reshape(-1, 1).astype(int), axis=1
             ).squeeze(1)
-            results.append(task_results.sum() / task_results.shape[0])
+            coverage = task_results.sum() / task_results.shape[0]
+            coverages.append(coverage)
 
-        return results
+        return coverages
 
 
 class ConformalMultilabelEvaluator(UncertaintyEvaluator):
@@ -521,14 +518,14 @@ class ConformalMultilabelEvaluator(UncertaintyEvaluator):
         targets_in = np.nan_to_num(targets, nan=1)
         uncertainties = np.array(uncertainties)
         num_tasks = targets.shape[1]
-        results = []
+        coverages = []
 
-        for task_id in range(num_tasks):
-            unc_task_id_in = uncertainties[:, task_id]
-            unc_task_id_out = uncertainties[:, task_id + num_tasks]
-            targets_out_task_id = targets_out[:, task_id]
-            targets_in_task_id = targets_in[:, task_id]
-            task_results = np.logical_and(unc_task_id_in <= targets_in_task_id, targets_out_task_id <= unc_task_id_out)
+        for i in range(num_tasks):
+            task_unc_in = uncertainties[:, i]
+            task_unc_out = uncertainties[:, i + num_tasks]
+            task_targets_out = targets_out[:, i]
+            task_targets_in = targets_in[:, i]
+            task_results = np.logical_and(task_unc_in <= task_targets_in, task_targets_out <= task_unc_out)
             results.append(task_results.sum() / task_results.shape[0])
 
         return results
