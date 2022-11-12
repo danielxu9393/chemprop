@@ -7,6 +7,7 @@ os.system("python3 test_train_regression.py")
 os.system("python3 test_train_quantile_regression.py")
 os.system("python3 test_train_quantile_regression_multi_smile_example.py")
 
+
 os.system("python3 test_predict_multiclass.py")
 os.system("python3 test_predict_multiclass_adaptive.py")
 os.system("python3 test_predict_multilabel.py")
