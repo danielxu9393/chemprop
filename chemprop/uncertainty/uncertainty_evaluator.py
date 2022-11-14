@@ -427,14 +427,17 @@ class ConformalRegressionEvaluator(UncertaintyEvaluator):
         Returns:
             Conformal coverage for each task
         """
+        targets = np.array(targets)
+        mask = np.array(mask, dtype=bool)
+        uncertainties = np.array(uncertainties)
         num_tasks = uncertainties.shape[1] // 2
         coverages = []
         for i in range(num_tasks):
             task_unc_lower = uncertainties[mask[:, i], i]
             task_unc_upper = uncertainties[mask[:, i], i + num_tasks]
             task_targets = targets[mask[:, i], i]
-            task_results = np.logical_and(task_unc_lower <= task_targets, task_targets <= task_unc_upper)
-            coverage = task_results.sum() / task_results.shape[0]
+            task_coverages = np.logical_and(task_unc_lower <= task_targets, task_targets <= task_unc_upper)
+            coverage = task_coverages.sum() / task_coverages.shape[0]
             coverages.append(coverage)
         return coverages
 
@@ -475,10 +478,10 @@ class ConformalMulticlassEvaluator(UncertaintyEvaluator):
         coverages = []
 
         for i in range(num_tasks):
-            task_results = np.take_along_axis(
+            task_coverages = np.take_along_axis(
                 uncertainties[mask[:, i], i], targets[mask[:, i], i].reshape(-1, 1).astype(int), axis=1
             ).squeeze(1)
-            coverage = task_results.sum() / task_results.shape[0]
+            coverage = task_coverages.sum() / task_coverages.shape[0]
             coverages.append(coverage)
 
         return coverages
@@ -525,10 +528,10 @@ class ConformalMultilabelEvaluator(UncertaintyEvaluator):
             task_unc_out = uncertainties[:, i + num_tasks]
             task_targets_out = targets_out[:, i]
             task_targets_in = targets_in[:, i]
-            task_results = np.logical_and(task_unc_in <= task_targets_in, task_targets_out <= task_unc_out)
-            results.append(task_results.sum() / task_results.shape[0])
+            task_coverages = np.logical_and(task_unc_in <= task_targets_in, task_targets_out <= task_unc_out)
+            coverages.append(task_coverages.sum() / task_coverages.shape[0])
 
-        return results
+        return coverages
 
 
 def build_uncertainty_evaluator(
